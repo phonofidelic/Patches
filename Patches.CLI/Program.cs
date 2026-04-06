@@ -8,6 +8,7 @@ using Patches.Shared.Commands;
 using Microsoft.EntityFrameworkCore;
 using Patches.Infrastructure.Repositories;
 using Patches.Domain.Entities;
+using Patches.Shared.Queries;
 
 var services = new ServiceCollection();
 
@@ -22,6 +23,8 @@ services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
+services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
+
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
 
