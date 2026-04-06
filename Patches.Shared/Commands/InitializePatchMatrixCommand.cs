@@ -1,4 +1,4 @@
-namespace Patches.Application.Commands;
+namespace Patches.Shared.Commands;
 
 public class InitializePatchMatrixCommand
 {

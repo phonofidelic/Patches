@@ -1,6 +1,5 @@
-using System;
-using Patches.Application.Commands;
 using Patches.Application.Contracts;
+using Patches.Shared.Commands;
 
 namespace Patches.CLI;
 

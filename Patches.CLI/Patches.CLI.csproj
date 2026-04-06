@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../Patches.Application/Patches.Application.csproj" />
+    <ProjectReference Include="../Patches.Infrastructure/Patches.Infrastructure.csproj" />
     <ProjectReference Include="../Patches.Services/Patches.Services.csproj" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
   </ItemGroup>
 

@@ -1,6 +1,4 @@
-using System;
-
-namespace Patches.Application.Commands;
+namespace Patches.Shared.Commands;
 
 public class AddModuleCommand
 {
@@ -30,19 +28,13 @@ public class AddModuleCommand
     }
 }
 
-public class AddModuleResult(
-    Guid id,
-    string name,
-    int hp,
-    int u,
-    IReadOnlyList<ModuleConnectionPoint> connectionPoints
-)
+public class AddModuleResult
 {
-    public Guid Id { get; set; } = id;
-    public string Name { get; set; } = name;
-    public int HorizontalPitch { get; set; } = hp;
-    public int VerticalUnits { get; set; } = u;
-    public IReadOnlyList<ModuleConnectionPoint> ConnectionPoints { get; set; } = connectionPoints;
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int HorizontalPitch { get; set; }
+    public int VerticalUnits { get; set; }
+    public IReadOnlyList<ModuleConnectionPoint> ConnectionPoints { get; set; } = [];
 }
 
 public class ModuleConnectionPoint
