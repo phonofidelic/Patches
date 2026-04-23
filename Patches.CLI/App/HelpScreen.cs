@@ -1,19 +1,17 @@
+using Patches.CLI.App;
+using Spectre.Console;
+
 namespace Patches.CLI;
 
 public partial class PatchesCLI
 {
     public void HelpScreen()
     {
-        string helpScreen =
-@"Patches
+        UI.Clear();
+        AnsiConsole.Write(Align.Center(new HelpTable(), VerticalAlignment.Middle));
         
-    Commands:
-    
-    'add'   Add a new Module
-    'list'  List all Modules
-    
-    'q' to Quit";
 
-        UI.WriteLine(helpScreen);
+        AnsiConsole.Cursor.SetPosition(0, Console.WindowHeight);
+            CurrentCommand = AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
     }
 }

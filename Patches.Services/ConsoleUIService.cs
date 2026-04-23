@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Patches.Application.Contracts;
 
 namespace Patches.Services;
@@ -22,21 +23,42 @@ public class ConsoleUIService : IConsoleUIService
 
     public void DisplayHelp()
     {
-        string helpScreen = @"Patches
+        string helpScreen =
+@"Patches
         
-        Commands:
-        
-        'add'   Add a new Module
-        'list'  List all Modules
-        
-        'q' to Quit";
-        // Console.WriteLine("Patches");
-        // Console.WriteLine("");
-        // Console.WriteLine("Commands:");
-        // Console.WriteLine("");
-        // Console.WriteLine("add module");
-        // Console.WriteLine("list modules");
+    Commands:
+    
+    'add'   Add a new Module
+    'list'  List all Modules
+    
+    'q' to Quit";
+
         WriteLine(helpScreen);
+    }
+
+    public T GetInput<T>(string prompt, string errorMessage, T? defaultValue = default!) where T : IParsable<T>
+    {
+        Write(prompt, omitFromBuffer: true);
+
+        string? input = null;
+
+        while (input == null)
+        {
+            input = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(input) && defaultValue != null)
+                return defaultValue;
+
+            if (T.TryParse(input, null, out T? parsedInput))
+            {
+                return parsedInput;
+            }
+
+            WriteError(errorMessage);
+            WriteLine();
+            input = null;
+        }
+        throw new Exception("Could not parse input");
     }
 
     public int GetIntInput(string prompt, string errorMessage, bool isRequired = true)
@@ -84,21 +106,28 @@ public class ConsoleUIService : IConsoleUIService
 
     public void TextBottom()
     {
-        var padding = Console.WindowHeight - 2;
+        var bufferHeight = Buffer.Current.Split("\n").ToList().Count;
+        var padding = Console.WindowHeight;
         Console.CursorTop = padding;
         for (int i = 0; i < padding; i++)
         {
             Buffer.Add("\n");
         }
+        // Debug($"WindowHeight: {Console.WindowHeight}");
+        // Debug($"padding: {Console.WindowHeight}");
     }
 
-    public void TextMiddle()
+    public void TextMiddle(bool omitFromBuffer = false)
     {
-        var padding = (Console.WindowHeight / 2) - 2;
+        var bufferHeight = Buffer.Current.Split("\n").ToList().Count;
+        var padding = (Console.WindowHeight) / 2;
         Console.CursorTop = padding;
-        for (int i = 0; i < padding; i++)
+        if (!omitFromBuffer)
         {
-            Buffer.Add("\n");
+            for (int i = 0; i < padding; i++)
+            {
+                Buffer.Add("\n");
+            }
         }
     }
 
@@ -118,9 +147,44 @@ public class ConsoleUIService : IConsoleUIService
     public void WriteLine(string message, bool omitFromBuffer = false) {
         Console.WriteLine(message);
         if (!omitFromBuffer)
-            Buffer.Add("\n" + message);
+            Buffer.Add(message + "\n");
+    }
+
+    public void WritePreviousBuffer()
+    {
+        Console.Write(Buffer.Previous);
+        Buffer.Current = Buffer.Previous;
+    }
+
+    public void WriteCurrentBuffer()
+    {
+        Console.Write(Buffer.Current);
+    }
+
+    public void ClearBuffer()
+    {
+        Buffer.Current = string.Empty;
+    }
+
+    public void VerticalPadding(int lines)
+    {
+        Console.CursorTop = lines;
+    }
+
+    public void WriteError(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        WriteLine(message, omitFromBuffer: true);
+        Console.ResetColor();
+    }
+    public void Debug(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        WriteLine($"[Debug]: {message}");
+        Console.ResetColor();
     }
 }
+
 
 class TextBuffer
 {
