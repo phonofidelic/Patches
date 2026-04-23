@@ -12,9 +12,15 @@ using Patches.Shared.Queries;
 
 var services = new ServiceCollection();
 
+var dbDir = Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+    "Patches");
+Directory.CreateDirectory(dbDir);
+var dbPath = Path.Combine(dbDir, "patches.db");
+
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseInMemoryDatabase("Patches.InMemoryDb");
+    options.UseSqlite($"Data Source={dbPath}");
 });
 
 services.AddLogging();
@@ -31,6 +37,12 @@ services.AddSingleton<PatchesCLI>();
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
 var serviceProvider = services.BuildServiceProvider();
+
+using (var scope = serviceProvider.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 var patches = serviceProvider.GetRequiredService<PatchesCLI>();
 
