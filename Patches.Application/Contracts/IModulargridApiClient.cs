@@ -9,4 +9,5 @@ public record ModulargridModuleDto(
 public interface IModulargridApiClient
 {
     Task<IReadOnlyList<ModulargridModuleDto>> GetModulesAsync(string endpointUrl);
+    IReadOnlyList<ModulargridModuleDto> ParseModulesFromJson(string json);
 }
