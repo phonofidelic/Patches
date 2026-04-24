@@ -9,7 +9,12 @@ public class MapperProfile: Profile
 {
     public MapperProfile()
     {
-        CreateMap<AddModuleCommand, Module>();
+        CreateMap<AddModuleCommand, Module>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.VendorId, opt => opt.Ignore())
+            .ForMember(dest => dest.Vendor, opt => opt.Ignore())
+            .ForMember(dest => dest.ConnectionPoints, opt => opt.Ignore());
+        CreateMap<ConnectionPoint, ModuleConnectionPoint>();
         CreateMap<Module, AddModuleResult>();
         CreateMap<Module, ModuleListItem>();
     }
