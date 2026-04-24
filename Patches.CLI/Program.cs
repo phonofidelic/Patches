@@ -32,6 +32,7 @@ services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
+services.AddScoped<IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult>, ImportModulesFromModulargridHandler>();
 
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();

@@ -15,6 +15,8 @@ public class HelpTable : IRenderable
             .AddColumns(["Commands", "Description"])
             .AddRow("[bold #FFD787]add[/]", "Add a new module")
             .AddEmptyRow()
+            .AddRow("[bold #FFD787]import[/]", "Import modules from Modulargrid")
+            .AddEmptyRow()
             .AddRow("[bold #FFD787]list[/]", "List all modules")
             .AddEmptyRow()
             .AddRow("[bold #FFD787]help[/]", "Display available commands")
