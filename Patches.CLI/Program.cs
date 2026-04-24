@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Patches.Infrastructure.Repositories;
 using Patches.Domain.Entities;
 using Patches.Shared.Queries;
+using Patches.Infrastructure.ModulargridApi;
 
 var services = new ServiceCollection();
 
@@ -35,6 +36,7 @@ services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
 
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
+services.AddHttpClient<IModulargridApiClient, ModulargridApiClient>();
 
 var serviceProvider = services.BuildServiceProvider();
 
