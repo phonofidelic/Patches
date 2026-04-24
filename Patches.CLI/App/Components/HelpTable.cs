@@ -17,6 +17,8 @@ public class HelpTable : IRenderable
             .AddEmptyRow()
             .AddRow("[bold #FFD787]import[/]", "Import modules from Modulargrid")
             .AddEmptyRow()
+            .AddRow("[bold #FFD787]import-json[/]", "Import modules from pasted Modulargrid JSON")
+            .AddEmptyRow()
             .AddRow("[bold #FFD787]list[/]", "List all modules")
             .AddEmptyRow()
             .AddRow("[bold #FFD787]help[/]", "Display available commands")
