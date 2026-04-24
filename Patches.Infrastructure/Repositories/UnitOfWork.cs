@@ -6,10 +6,12 @@ namespace Patches.Infrastructure.Repositories;
 
 public class UnitOfWork(
     IRepository<Module> moduleRepository,
+    IRepository<Vendor> vendorRepository,
     ApplicationDbContext context) : IUnitOfWork
 {
     private readonly ApplicationDbContext context = context;
     public IRepository<Module> Modules { get; set; } = moduleRepository;
+    public IRepository<Vendor> Vendors { get; set; } = vendorRepository;
 
     public async Task SaveChangesAsync()
     {

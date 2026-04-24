@@ -25,6 +25,7 @@ services.AddDbContext<ApplicationDbContext>(options =>
 
 services.AddLogging();
 services.AddScoped<IRepository<Module>, ModuleRepository>();
+services.AddScoped<IRepository<Vendor>, VendorRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
