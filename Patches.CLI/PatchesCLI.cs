@@ -10,12 +10,15 @@ public partial class PatchesCLI(
         IConsoleUIService ui,
         IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
         IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
-        IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler)
+        IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
+        IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult> importModulesHandler)
 {
     private readonly IConsoleUIService UI = ui;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
-    private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;    private InitializePatchMatrixResult? State { get; set; }
+    private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
+    private readonly IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult> importModulesHandler = importModulesHandler;
+    private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
     private IReadOnlyList<string> QuitCommands { get; } = ["q", "quit"];
 
@@ -66,6 +69,11 @@ public partial class PatchesCLI(
 
             switch (CurrentCommand)
             {
+                case "import":
+                case "im":
+                    await ImportModulesForm();
+                    break;
+
                 case "add":
                 case "a":
                     await AddModuleForm();
