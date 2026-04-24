@@ -5,4 +5,5 @@
   <Project Path="Patches.Infrastructure/Patches.Infrastructure.csproj" />
   <Project Path="Patches.Services/Patches.Services.csproj" />
   <Project Path="Patches.Shared/Patches.Shared.csproj" />
+  <Project Path="Patches.Tests/Patches.Tests.csproj" />
 </Solution>
