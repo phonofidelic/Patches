@@ -6,7 +6,7 @@ namespace Patches.Tests;
 public class ParseModulesFromJsonTests
 {
     private static ModulargridApiClient CreateClient() =>
-        new ModulargridApiClient(new HttpClient());
+        new ModulargridApiClient();
 
     [Fact]
     public void ValidJson_ReturnsMappedDtos()
