@@ -11,14 +11,12 @@ public partial class PatchesCLI(
         IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
         IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
         IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
-        IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult> importModulesHandler,
         IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler)
 {
     private readonly IConsoleUIService UI = ui;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
-    private readonly IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult> importModulesHandler = importModulesHandler;
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
     private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
@@ -71,11 +69,6 @@ public partial class PatchesCLI(
 
             switch (CurrentCommand)
             {
-                case "import":
-                case "im":
-                    await ImportModulesForm();
-                    break;
-
                 case "import-json":
                 case "ij":
                     await ImportModulesFromJsonForm();
