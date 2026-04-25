@@ -1,17 +1,10 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using Patches.Application.Contracts;
 
 namespace Patches.Infrastructure.ModulargridApi;
 
-public class ModulargridApiClient(HttpClient httpClient) : IModulargridApiClient
+public class ModulargridApiClient : IModulargridApiClient
 {
-    public async Task<IReadOnlyList<ModulargridModuleDto>> GetModulesAsync(string endpointUrl)
-    {
-        var apiResponse = await httpClient.GetFromJsonAsync<ModulargridApiResponse>(endpointUrl);
-        return MapToDto(apiResponse);
-    }
-
     public IReadOnlyList<ModulargridModuleDto> ParseModulesFromJson(string json)
     {
         var apiResponse = JsonSerializer.Deserialize<ModulargridApiResponse>(json);

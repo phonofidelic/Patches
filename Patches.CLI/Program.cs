@@ -32,14 +32,13 @@ services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
-services.AddScoped<IHandler<ImportModulesFromModulargridCommand, ImportModulesFromModulargridResult>, ImportModulesFromModulargridHandler>();
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
 
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
 
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
-services.AddHttpClient<IModulargridApiClient, ModulargridApiClient>();
+services.AddScoped<IModulargridApiClient, ModulargridApiClient>();
 
 var serviceProvider = services.BuildServiceProvider();
 
