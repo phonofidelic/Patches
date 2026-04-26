@@ -17,5 +17,6 @@ public class MapperProfile: Profile
         CreateMap<ConnectionPoint, ModuleConnectionPoint>();
         CreateMap<Module, AddModuleResult>();
         CreateMap<Module, ModuleListItem>();
+        CreateMap<Module, PatchMatrixItemDto>();
     }
 }
