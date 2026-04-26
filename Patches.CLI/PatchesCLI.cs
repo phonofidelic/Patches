@@ -11,13 +11,15 @@ public partial class PatchesCLI(
         IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
         IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
         IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
-        IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler)
+        IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
+        IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> getModulesForPatchMatrixHandler)
 {
     private readonly IConsoleUIService UI = ui;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
+    private readonly IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
     private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
     private IReadOnlyList<string> QuitCommands { get; } = ["q", "quit"];
@@ -83,6 +85,12 @@ public partial class PatchesCLI(
                 case "ls":
                 case "l":
                     await ModulesList();
+                    break;
+
+                case "new-patch":
+                case "np":
+                case "new":
+                    await RenderPatchMatrixScreenAsync();
                     break;
 
                 case "help":
