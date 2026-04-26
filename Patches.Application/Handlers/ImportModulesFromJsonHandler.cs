@@ -8,7 +8,9 @@ public class ImportModulesFromJsonHandler(
     IModulargridApiClient apiClient,
     IUnitOfWork unitOfWork) : IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>
 {
-    public async Task<ImportModulesFromJsonResult> HandleAsync(ImportModulesFromJsonCommand command)
+    public async Task<ImportModulesFromJsonResult> HandleAsync(
+        ImportModulesFromJsonCommand command,
+        CancellationToken ct = default)
     {
         var dtos = apiClient.ParseModulesFromJson(command.Json);
 

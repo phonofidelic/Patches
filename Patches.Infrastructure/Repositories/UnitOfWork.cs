@@ -5,13 +5,24 @@ using Patches.Infrastructure.Data;
 namespace Patches.Infrastructure.Repositories;
 
 public class UnitOfWork(
-    IRepository<Module> moduleRepository,
-    IRepository<Vendor> vendorRepository,
+    IRepository<Module, Guid> moduleRepository,
+    IRepository<Vendor, Guid> vendorRepository,
+    IRepository<ConnectionPoint, int> connectionPointRepository,
+    IRepository<Connection, int> connectionRepository,
+    IRepository<Patch, int> patchRepository,
     ApplicationDbContext context) : IUnitOfWork
 {
     private readonly ApplicationDbContext context = context;
-    public IRepository<Module> Modules { get; set; } = moduleRepository;
-    public IRepository<Vendor> Vendors { get; set; } = vendorRepository;
+    
+    public IRepository<Module, Guid> Modules { get; } = moduleRepository;
+
+    public IRepository<Vendor, Guid> Vendors { get; } = vendorRepository;
+
+    public IRepository<ConnectionPoint, int> ConnectionPoints { get; } = connectionPointRepository;
+
+    public IRepository<Connection, int> Connections { get; } = connectionRepository;
+
+    public IRepository<Patch, int> Patches { get; } = patchRepository;
 
     public async Task SaveChangesAsync()
     {

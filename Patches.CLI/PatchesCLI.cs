@@ -12,7 +12,8 @@ public partial class PatchesCLI(
         IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
         IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
         IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-        IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> getModulesForPatchMatrixHandler)
+        IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> getModulesForPatchMatrixHandler,
+        IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler)
 {
     private readonly IConsoleUIService UI = ui;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
@@ -20,6 +21,7 @@ public partial class PatchesCLI(
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
     private readonly IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
+    private readonly IHandler<AddConnectionCommand, AddConnectionResult> AddConnectionHandler = addConnectionHandler;
     private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
     private IReadOnlyList<string> QuitCommands { get; } = ["q", "quit"];

@@ -1,5 +1,7 @@
 using System;
 using System.Drawing;
+using Patches.Shared.Commands;
+using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 using Spectre.Console;
 
@@ -26,34 +28,38 @@ public partial class PatchesCLI
 
         var random = new Random();
         // Add mock connection points
-        foreach ( var module in modules)
+        foreach (var module in modules)
         {
             module.ConnectionPoints.Add(new()
             {
                 Id = random.Next(),
-                Name = "CV",
+                Name = "CV In",
                 ModuleName = module.Name,
+                ModuleId = module.Id,
                 Type = PatchMatrixConnectionPointType.Input
             });
             module.ConnectionPoints.Add(new()
             {
                 Id = random.Next(),
-                Name = "Gate",
+                Name = "Gate In",
                 ModuleName = module.Name,
+                ModuleId = module.Id,
                 Type = PatchMatrixConnectionPointType.Input
             });
             module.ConnectionPoints.Add(new()
             {
                 Id = random.Next(),
-                Name = "CV",
+                Name = "CV Out",
                 ModuleName = module.Name,
+                ModuleId = module.Id,
                 Type = PatchMatrixConnectionPointType.Output
             });
             module.ConnectionPoints.Add(new()
             {
                 Id = random.Next(),
-                Name = "Gate",
+                Name = "Gate Out",
                 ModuleName = module.Name,
+                ModuleId = module.Id,
                 Type = PatchMatrixConnectionPointType.Output
             });
         }
@@ -166,9 +172,12 @@ public partial class PatchesCLI
                 
                 for (int i = 0; i < columnCount; i++)
                 {
+                    var outputId = rowConnectionPoints[position.Row].Id;
+                    var inputId = columnConnectionPoints[position.Col].Id;
+                    string cellContent = " ";
                     var cell = position.Row == item.index && position.Col == i 
-                        ? "[#000 on #FFD787][[ ]][/]"
-                        : "[#FFD787][[ ]][/]";
+                        ? $"[#000 on #FFD787][[{cellContent}]][/]"
+                        : $"[#FFD787][[{cellContent}]][/]";
 
                     cells.Add(cell);
                 }
@@ -203,8 +212,45 @@ public partial class PatchesCLI
                     if (position.Row > 0)
                         position.MoveUp();
                     break;
+                
+                case ConsoleKey.Spacebar:
+                    await AddPatchMatrixConnectionAsync(
+                        input: columnConnectionPoints[position.Col],
+                        output: rowConnectionPoints[position.Row]);
+                    break;
+
             }
                 
         } while (command.Key != ConsoleKey.Escape);
+    }
+
+    private async Task AddPatchMatrixConnectionAsync(
+        PatchMatrixConnectionPointDto input,
+        PatchMatrixConnectionPointDto output,
+        CancellationToken ct = default)
+    {
+        var inputConnectionPointDto = new ConnectionPointDto
+        {
+            Id = input.Id,
+            Name = input.Name,
+            ModuleId = input.ModuleId,
+            Type = input.Type.ToString()
+        };
+
+        var outputConnectionPointDto = new ConnectionPointDto
+        {
+            Id = output.Id,
+            Name = output.Name,
+            ModuleId = output.ModuleId,
+            Type = output.Type.ToString()
+        };
+
+        var command = new AddConnectionCommand(
+            input: inputConnectionPointDto,
+            output: outputConnectionPointDto,
+            -1
+        );
+
+        await AddConnectionHandler.HandleAsync(command, ct);
     }
 }

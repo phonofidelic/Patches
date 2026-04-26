@@ -25,8 +25,11 @@ services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 services.AddLogging();
-services.AddScoped<IRepository<Module>, ModuleRepository>();
-services.AddScoped<IRepository<Vendor>, VendorRepository>();
+services.AddScoped<IRepository<Module, Guid>, ModuleRepository>();
+services.AddScoped<IRepository<Vendor, Guid>, VendorRepository>();
+services.AddScoped<IRepository<ConnectionPoint, int>, ConnectionPointRepository>();
+services.AddScoped<IRepository<Connection, int>, ConnectionRepository>();
+services.AddScoped<IRepository<Patch, int>, PatchRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
@@ -34,6 +37,7 @@ services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
 services.AddScoped<IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult>, GetModulesForPatchMatrixHandler>();
+services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConnectionHandler>();
 
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();

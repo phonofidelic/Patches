@@ -9,6 +9,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Domain.Entities.Module> Modules { get; set; }
     public DbSet<ConnectionPoint> ConnectionPoints { get; set; }
     public DbSet<Vendor> Vendors { get; set; }
+    public DbSet<Connection> Connections { get; set; }
+    public DbSet<Patch> Patches { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

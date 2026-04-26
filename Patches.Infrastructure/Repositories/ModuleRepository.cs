@@ -5,12 +5,20 @@ using Patches.Infrastructure.Data;
 
 namespace Patches.Infrastructure.Repositories;
 
-public class ModuleRepository(ApplicationDbContext context) : IRepository<Module>
+public class ModuleRepository(ApplicationDbContext context) : IRepository<Module, Guid>
 {
     private readonly ApplicationDbContext context = context;
     public void Add(Module entity)
     {
         context.Modules.Add(entity);
+    }
+
+    public async Task<Module?> FindByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await context.Modules
+            .Include(m => m.ConnectionPoints)
+            .Include(m => m.Vendor)
+            .FirstOrDefaultAsync(m => m.Id == id, ct);
     }
 
     public IEnumerable<Module> GetAll()

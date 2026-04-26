@@ -11,7 +11,9 @@ public class GetModulesForPatchMatrixHandler(
 {
     private readonly IMapper mapper = mapper;
     private readonly IUnitOfWork unitOfWork = unitOfWork;
-    public async Task<GetModulesForPatchMatrixQueryResult> HandleAsync(GetModulesForPatchMatrixQuery request)
+    public async Task<GetModulesForPatchMatrixQueryResult> HandleAsync(
+        GetModulesForPatchMatrixQuery request, 
+        CancellationToken ct = default)
     {
         var modules = unitOfWork.Modules.GetAll()
             .Select(mapper.Map<PatchMatrixItemDto>)

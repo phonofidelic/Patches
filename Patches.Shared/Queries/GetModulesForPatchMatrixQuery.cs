@@ -26,6 +26,7 @@ public class PatchMatrixConnectionPointDto
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string  ModuleName { get; set; } = string.Empty;
+    public Guid ModuleId { get; set; }
     public PatchMatrixConnectionPointType Type { get; set; }
 }
 

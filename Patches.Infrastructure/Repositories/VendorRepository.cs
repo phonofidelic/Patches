@@ -5,13 +5,18 @@ using Patches.Infrastructure.Data;
 
 namespace Patches.Infrastructure.Repositories;
 
-public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor>
+public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor, Guid>
 {
     private readonly ApplicationDbContext context = context;
 
     public void Add(Vendor entity)
     {
         context.Vendors.Add(entity);
+    }
+
+    public Task<Vendor?> FindByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
     }
 
     public IEnumerable<Vendor> GetAll()
