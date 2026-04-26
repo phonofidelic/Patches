@@ -17,7 +17,7 @@ public class PatchMatrixItemDto
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; } = string.Empty;
-    public string VendorName { get; set; } = string.Empty;
+    public string? VendorName { get; set; } = string.Empty;
     public List<PatchMatrixConnectionPointDto> ConnectionPoints { get; set; } = [];
 }
 
