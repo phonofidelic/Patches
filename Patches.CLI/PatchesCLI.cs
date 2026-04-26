@@ -95,6 +95,12 @@ public partial class PatchesCLI(
                     await RenderPatchMatrixScreenAsync();
                     break;
 
+                case "load-patch":
+                case "lp":
+                    await RenderLoadPatchScreenAsync();
+                    break;
+
+
                 case "help":
                 case "h":
                     HelpScreen();
