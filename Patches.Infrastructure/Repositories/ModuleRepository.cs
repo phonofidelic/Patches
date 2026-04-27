@@ -14,7 +14,7 @@ public class ModuleRepository(ApplicationDbContext context) : IRepository<Module
         context.Modules.Add(entity);
     }
 
-    public Task<Module?> FindByConditionAsync(Expression<Func<Module, bool>> condition, CancellationToken ct = default)
+    public IQueryable<Module> FindByCondition(Expression<Func<Module, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();
     }

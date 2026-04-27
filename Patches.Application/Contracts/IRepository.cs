@@ -10,5 +10,5 @@ public interface IRepository<TEntity, TId>
     
     Task<TEntity?> FindByIdAsync(TId id, CancellationToken ct = default);
 
-    Task<TEntity?> FindByConditionAsync(Expression<Func<TEntity,bool>> condition, CancellationToken ct = default);
+    IQueryable<TEntity> FindByCondition(Expression<Func<TEntity,bool>> condition, bool trackChanges = false);
 }

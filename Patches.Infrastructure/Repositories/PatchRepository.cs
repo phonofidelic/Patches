@@ -15,7 +15,7 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
         context.Patches.Add(entity);
     }
 
-    public Task<Patch?> FindByConditionAsync(Expression<Func<Patch, bool>> condition, CancellationToken ct = default)
+    public IQueryable<Patch> FindByCondition(Expression<Func<Patch, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();
     }

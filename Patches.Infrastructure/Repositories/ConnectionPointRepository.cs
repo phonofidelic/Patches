@@ -17,9 +17,13 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
         context.ConnectionPoints.Add(entity);
     }
 
-    public Task<ConnectionPoint?> FindByConditionAsync(Expression<Func<ConnectionPoint, bool>> condition, CancellationToken ct = default)
+    public IQueryable<ConnectionPoint> FindByCondition(Expression<Func<ConnectionPoint, bool>> condition, bool trackChanges = false)
     {
-        throw new NotImplementedException();
+        return (!trackChanges 
+            ? context.ConnectionPoints.AsNoTracking() 
+            : context.ConnectionPoints)
+                .Include(c => c.Module)
+                .Where(condition);
     }
 
     public async Task<ConnectionPoint?> FindByIdAsync(int id, CancellationToken ct = default)

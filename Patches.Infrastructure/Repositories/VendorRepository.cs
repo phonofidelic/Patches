@@ -15,7 +15,7 @@ public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor
         context.Vendors.Add(entity);
     }
 
-    public Task<Vendor?> FindByConditionAsync(Expression<Func<Vendor, bool>> condition, CancellationToken ct = default)
+    public IQueryable<Vendor> FindByCondition(Expression<Func<Vendor, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();
     }

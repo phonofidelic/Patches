@@ -15,7 +15,7 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
         context.Connections.Add(entity);
     }
 
-    public Task<Connection?> FindByConditionAsync(Expression<Func<Connection, bool>> condition, CancellationToken ct = default)
+    public IQueryable<Connection> FindByCondition(Expression<Func<Connection, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();
     }
