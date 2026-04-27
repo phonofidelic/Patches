@@ -1,24 +1,23 @@
-using System;
-
 namespace Patches.Shared.Queries;
 
-public class GetModulesForPatchMatrixQuery
+public class LoadPatchMatrixQuery
 {
     public int? PatchId { get; set; }
 
-    public GetModulesForPatchMatrixQuery()
+    public LoadPatchMatrixQuery()
     {
         
     }
-    public GetModulesForPatchMatrixQuery(int patchId)
+    public LoadPatchMatrixQuery(int patchId)
     {
         PatchId = patchId;
     }
 }
 
-public class GetModulesForPatchMatrixQueryResult
+public class LoadPatchMatrixResult
 {
     public IReadOnlyList<PatchMatrixItemDto> Modules { get; set; } = [];
+    public IReadOnlyList<PatchMatrixConnectionPointDto> ConnectionPoints { get; set; } = [];
 }
 
 public class PatchMatrixItemDto

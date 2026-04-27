@@ -36,7 +36,7 @@ services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixR
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
-services.AddScoped<IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult>, GetModulesForPatchMatrixHandler>();
+services.AddScoped<IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult>, LoadPatchMatrixHandler>();
 services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConnectionHandler>();
 services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
 

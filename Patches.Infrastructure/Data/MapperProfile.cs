@@ -18,12 +18,17 @@ public class MapperProfile: Profile
         CreateMap<ConnectionPoint, ModuleConnectionPoint>();
         CreateMap<Module, AddModuleResult>();
         CreateMap<Module, ModuleListItem>();
+
         CreateMap<Module, PatchMatrixItemDto>()
             .ForMember(dest => dest.VendorName, opt => opt.MapFrom(src => src.Vendor));
+
+        CreateMap<ICollection<ConnectionPoint>,List<PatchMatrixConnectionPointDto>>();
+
         CreateMap<ConnectionPoint, PatchMatrixConnectionPointDto>()
             .ForMember(dest => dest.ModuleName, opt => opt.MapFrom(src => src.Module.Name))
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => 
                 Enum.Parse<PatchMatrixConnectionPointType>(src.Type.Name)));
+
         CreateMap<Patch, PatchListItemDto>();
     }
 }

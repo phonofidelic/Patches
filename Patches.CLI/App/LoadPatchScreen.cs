@@ -11,6 +11,13 @@ public partial class PatchesCLI
         PatchListItemDto? selectedPatch;
         var result = await ListPatchesHandler.HandleAsync(new());
 
+        if (result.Patches.Count < 1)
+        {
+            // ToDo: Show prompt to create a new patch or return to home screen
+            CurrentCommand = null;
+            return;
+        }
+
         var choices = new SelectionPrompt<PatchListItemDto>()
         {
             Converter = p => $"[#FFF]{p.Name}[/]",

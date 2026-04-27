@@ -12,7 +12,7 @@ public partial class PatchesCLI(
         IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
         IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
         IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-        IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> getModulesForPatchMatrixHandler,
+        IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
         IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
         IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
 {
@@ -21,7 +21,7 @@ public partial class PatchesCLI(
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
-    private readonly IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
+    private readonly IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
     private readonly IHandler<AddConnectionCommand, AddConnectionResult> AddConnectionHandler = addConnectionHandler;
     private readonly IHandler<ListPatchesQuery, ListPatchesQueryResult> ListPatchesHandler = listPatchesHandler;
     private InitializePatchMatrixResult? State { get; set; }

@@ -21,48 +21,48 @@ public partial class PatchesCLI
 {
     public async Task RenderPatchMatrixScreenAsync(PatchListItemDto? selectedPatch = null)
     {
-        var result = await GetModulesForPatchMatrixHandler.HandleAsync(new GetModulesForPatchMatrixQuery());
+        var result = await GetModulesForPatchMatrixHandler.HandleAsync(new LoadPatchMatrixQuery());
         var modules = result.Modules;
         ConsoleKeyInfo command;
         var position = new TablePosition();
 
-        var random = new Random();
-        // Add mock connection points
-        foreach (var module in modules)
-        {
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "CV In",
-                ModuleName = module.Name,
-                ModuleId = module.Id,
-                Type = PatchMatrixConnectionPointType.Input
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "Gate In",
-                ModuleName = module.Name,
-                ModuleId = module.Id,
-                Type = PatchMatrixConnectionPointType.Input
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "CV Out",
-                ModuleName = module.Name,
-                ModuleId = module.Id,
-                Type = PatchMatrixConnectionPointType.Output
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "Gate Out",
-                ModuleName = module.Name,
-                ModuleId = module.Id,
-                Type = PatchMatrixConnectionPointType.Output
-            });
-        }
+        // var random = new Random();
+        // // Add mock connection points
+        // foreach (var module in modules)
+        // {
+        //     module.ConnectionPoints.Add(new()
+        //     {
+        //         Id = random.Next(),
+        //         Name = "CV In",
+        //         ModuleName = module.Name,
+        //         ModuleId = module.Id,
+        //         Type = PatchMatrixConnectionPointType.Input
+        //     });
+        //     module.ConnectionPoints.Add(new()
+        //     {
+        //         Id = random.Next(),
+        //         Name = "Gate In",
+        //         ModuleName = module.Name,
+        //         ModuleId = module.Id,
+        //         Type = PatchMatrixConnectionPointType.Input
+        //     });
+        //     module.ConnectionPoints.Add(new()
+        //     {
+        //         Id = random.Next(),
+        //         Name = "CV Out",
+        //         ModuleName = module.Name,
+        //         ModuleId = module.Id,
+        //         Type = PatchMatrixConnectionPointType.Output
+        //     });
+        //     module.ConnectionPoints.Add(new()
+        //     {
+        //         Id = random.Next(),
+        //         Name = "Gate Out",
+        //         ModuleName = module.Name,
+        //         ModuleId = module.Id,
+        //         Type = PatchMatrixConnectionPointType.Output
+        //     });
+        // }
 
         List<PatchMatrixConnectionPointDto> columnConnectionPoints = [];
         List<string> columnConnectionPointNames = [];
