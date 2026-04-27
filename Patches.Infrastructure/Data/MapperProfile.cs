@@ -23,5 +23,6 @@ public class MapperProfile: Profile
             .ForMember(dest => dest.ModuleName, opt => opt.MapFrom(src => src.Module.Name))
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => 
                 Enum.Parse<PatchMatrixConnectionPointType>(src.Type.Name)));
+        CreateMap<Patch, PatchListItemDto>();
     }
 }

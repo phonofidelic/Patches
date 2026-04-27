@@ -38,6 +38,7 @@ services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModul
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
 services.AddScoped<IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult>, GetModulesForPatchMatrixHandler>();
 services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConnectionHandler>();
+services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
 
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
