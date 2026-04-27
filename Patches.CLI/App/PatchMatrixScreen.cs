@@ -19,7 +19,7 @@ public class TablePosition()
 }
 public partial class PatchesCLI
 {
-    public async Task RenderPatchMatrixScreenAsync()
+    public async Task RenderPatchMatrixScreenAsync(PatchListItemDto? selectedPatch = null)
     {
         var result = await GetModulesForPatchMatrixHandler.HandleAsync(new GetModulesForPatchMatrixQuery());
         var modules = result.Modules;
@@ -185,6 +185,12 @@ public partial class PatchesCLI
                 patchMatrix.AddRow([header, ..cells]);
             }
 
+            if (selectedPatch != null)
+            {
+                AnsiConsole.MarkupLine($"[#FFD787 bold]{selectedPatch.Name}[/]");
+                AnsiConsole.MarkupLine($"[#FFD787]\n{selectedPatch.Description}[/]");
+            }
+
             AnsiConsole.Write(patchMatrix);
 
             AnsiConsole.WriteLine("");
@@ -222,6 +228,8 @@ public partial class PatchesCLI
             }
                 
         } while (command.Key != ConsoleKey.Escape);
+
+        CurrentCommand = null;
     }
 
     private async Task AddPatchMatrixConnectionAsync(

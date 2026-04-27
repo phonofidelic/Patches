@@ -4,7 +4,16 @@ namespace Patches.Shared.Queries;
 
 public class GetModulesForPatchMatrixQuery
 {
+    public int? PatchId { get; set; }
 
+    public GetModulesForPatchMatrixQuery()
+    {
+        
+    }
+    public GetModulesForPatchMatrixQuery(int patchId)
+    {
+        PatchId = patchId;
+    }
 }
 
 public class GetModulesForPatchMatrixQueryResult

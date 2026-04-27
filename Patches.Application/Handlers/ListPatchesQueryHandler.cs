@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using Patches.Application.Contracts;
+using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 
 namespace Patches.Application.Handlers;

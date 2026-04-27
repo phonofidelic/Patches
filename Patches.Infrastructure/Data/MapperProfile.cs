@@ -1,6 +1,7 @@
 using AutoMapper;
 using Patches.Domain.Entities;
 using Patches.Shared.Commands;
+using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 
 namespace Patches.Infrastructure.Data;

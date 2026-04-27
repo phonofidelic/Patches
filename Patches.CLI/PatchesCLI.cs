@@ -45,20 +45,18 @@ public partial class PatchesCLI(
         var rootLayout = new Layout("Root")
             .SplitRows(
                 new Layout("Top").Size(banner.Height + helpTable.Height + 6),
-                new Layout("Bottom")
-            );
+                new Layout("Bottom"));
 
         var top = rootLayout["Top"];
         var bottom = rootLayout["Bottom"];
         
         top.Update(new Rows(
             banner,
-            helpTable
-        ));
+            helpTable));
 
         bottom.Update(new Rows());
 
-        while (!QuitCommands.Contains(CurrentCommand))
+        do
         {
             UI.Clear();
             AnsiConsole.Write(rootLayout);
@@ -71,7 +69,7 @@ public partial class PatchesCLI(
             bottom.Update(new Rows());
  
             AnsiConsole.Cursor.SetPosition(0, Console.WindowHeight);
-            CurrentCommand = AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
+            CurrentCommand ??= AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
 
             switch (CurrentCommand)
             {
@@ -108,17 +106,21 @@ public partial class PatchesCLI(
                     HelpScreen();
                     break;
 
+                case "quit":
+                case "q":
                 case null:
                     break;
 
                 default: 
                     bottom.Update(Align.Left(
                         new Rows(
-                            new Markup($"[red]Unknown command: '{Markup.Escape(CurrentCommand)}'[/]")),
+                            new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(CurrentCommand)}'[/]")),
                         VerticalAlignment.Middle));
+                    CurrentCommand = null;
                     break;
             }
-        }
+
+        } while (!QuitCommands.Contains(CurrentCommand));
 
         UI.WriteLine("Exiting");
         UI.Clear();
