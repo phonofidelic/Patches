@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
@@ -12,6 +13,11 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
     public void Add(Connection entity)
     {
         context.Connections.Add(entity);
+    }
+
+    public Task<Connection?> FindByConditionAsync(Expression<Func<Connection, bool>> condition, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Connection?> FindByIdAsync(int id, CancellationToken ct = default)

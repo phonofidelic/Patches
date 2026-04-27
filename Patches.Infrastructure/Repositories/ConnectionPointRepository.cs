@@ -1,5 +1,6 @@
 using System;
 using System.IO.Compression;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
@@ -14,6 +15,11 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
     public void Add(ConnectionPoint entity)
     {
         context.ConnectionPoints.Add(entity);
+    }
+
+    public Task<ConnectionPoint?> FindByConditionAsync(Expression<Func<ConnectionPoint, bool>> condition, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<ConnectionPoint?> FindByIdAsync(int id, CancellationToken ct = default)

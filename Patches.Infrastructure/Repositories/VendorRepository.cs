@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
@@ -12,6 +13,11 @@ public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor
     public void Add(Vendor entity)
     {
         context.Vendors.Add(entity);
+    }
+
+    public Task<Vendor?> FindByConditionAsync(Expression<Func<Vendor, bool>> condition, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
     }
 
     public Task<Vendor?> FindByIdAsync(Guid id, CancellationToken ct = default)

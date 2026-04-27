@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
@@ -12,6 +13,11 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
     public void Add(Patch entity)
     {
         context.Patches.Add(entity);
+    }
+
+    public Task<Patch?> FindByConditionAsync(Expression<Func<Patch, bool>> condition, CancellationToken ct = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Patch?> FindByIdAsync(int id, CancellationToken ct = default)
