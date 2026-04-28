@@ -1,5 +1,3 @@
-using System;
-using System.IO.Compression;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
@@ -23,12 +21,15 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
             ? context.ConnectionPoints.AsNoTracking() 
             : context.ConnectionPoints)
                 .Include(c => c.Module)
+                .Include(c => c.Type)
                 .Where(condition);
     }
 
     public async Task<ConnectionPoint?> FindByIdAsync(int id, CancellationToken ct = default)
     {
         return await context.ConnectionPoints
+            .Include(c => c.Module)
+            .Include(c => c.Type)
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == id, ct);
     }
@@ -37,6 +38,7 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
     {
         return context.ConnectionPoints
             .Include(c => c.Module)
+            .Include(c => c.Type)
             .AsNoTracking();
     }
 }

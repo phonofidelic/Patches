@@ -7,16 +7,18 @@ using Spectre.Console;
 namespace Patches.CLI;
 
 public partial class PatchesCLI(
-        IConsoleUIService ui,
-        IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
-        IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
-        IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
-        IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-        IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
-        IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
-        IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
+    IConsoleUIService ui,
+    IAnsiConsole ansiConsole,
+    IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
+    IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
+    IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
+    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
+    IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
+    IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
+    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
 {
     private readonly IConsoleUIService UI = ui;
+    private readonly IAnsiConsole AnsiConsole = ansiConsole;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
@@ -99,7 +101,6 @@ public partial class PatchesCLI(
                 case "lp":
                     await RenderLoadPatchScreenAsync();
                     break;
-
 
                 case "help":
                 case "h":

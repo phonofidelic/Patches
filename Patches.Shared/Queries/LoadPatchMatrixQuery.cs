@@ -18,6 +18,8 @@ public class LoadPatchMatrixResult
 {
     public IReadOnlyList<PatchMatrixItemDto> Modules { get; set; } = [];
     public IReadOnlyList<PatchMatrixConnectionPointDto> ConnectionPoints { get; set; } = [];
+    public IReadOnlyList<PatchMatrixConnectionPointDto> Inputs { get; set; } = [];
+    public IReadOnlyList<PatchMatrixConnectionPointDto> Outputs { get; set; } = [];
 }
 
 public class PatchMatrixItemDto
@@ -35,12 +37,11 @@ public class PatchMatrixConnectionPointDto
     public string Name { get; set; } = string.Empty;
     public string  ModuleName { get; set; } = string.Empty;
     public Guid ModuleId { get; set; }
-    public PatchMatrixConnectionPointType Type { get; set; }
+    public PatchMatrixConnectionPointType Type { get; set; } = default!;
 }
 
-public enum PatchMatrixConnectionPointType
+public class PatchMatrixConnectionPointType
 {
-    Input,
-    Output,
-    Multiple
+    // Multiple,
+    public string Name { get; set; } = string.Empty;
 }
