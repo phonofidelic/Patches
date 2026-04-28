@@ -20,12 +20,17 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
         throw new NotImplementedException();
     }
 
-    public async Task<Patch?> FindByIdAsync(int id, CancellationToken ct = default)
+    public async Task<Patch?> FindByIdAsync(
+        int id,
+        bool trackChanges = false,
+        CancellationToken ct = default)
     {
-        return await context.Patches
-            .Include(p => p.Modules)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
+        return await (!trackChanges 
+            ? context.Patches.AsNoTracking()
+            : context.Patches)
+                .Include(p => p.Modules)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id, ct);
     }
 
     public IEnumerable<Patch> GetAll()

@@ -1,6 +1,4 @@
-﻿using Patches.Domain.ValueObjects;
-
-namespace Patches.Domain.Entities;
+﻿namespace Patches.Domain.Entities;
 
 public class Patch: BaseEntity<int>
 {

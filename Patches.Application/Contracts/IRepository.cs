@@ -8,7 +8,7 @@ public interface IRepository<TEntity, TId>
 
     IEnumerable<TEntity> GetAll();
     
-    Task<TEntity?> FindByIdAsync(TId id, CancellationToken ct = default);
+    Task<TEntity?> FindByIdAsync(TId id, bool trackChanges = false, CancellationToken ct = default);
 
     IQueryable<TEntity> FindByCondition(Expression<Func<TEntity,bool>> condition, bool trackChanges = false);
 }

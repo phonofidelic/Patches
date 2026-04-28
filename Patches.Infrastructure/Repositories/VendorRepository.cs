@@ -20,7 +20,10 @@ public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor
         throw new NotImplementedException();
     }
 
-    public Task<Vendor?> FindByIdAsync(Guid id, CancellationToken ct = default)
+    public Task<Vendor?> FindByIdAsync(
+        Guid id, 
+        bool trackChanges = false,
+        CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }

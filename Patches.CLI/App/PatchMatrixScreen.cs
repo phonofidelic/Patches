@@ -162,7 +162,8 @@ public partial class PatchesCLI
                 case ConsoleKey.Spacebar:
                     await AddPatchMatrixConnectionAsync(
                         input: columnConnectionPoints[position.Col],
-                        output: rowConnectionPoints[position.Row]);
+                        output: rowConnectionPoints[position.Row],
+                        patchId: selectedPatch?.Id);
                     break;
 
             }
@@ -175,6 +176,7 @@ public partial class PatchesCLI
     private async Task AddPatchMatrixConnectionAsync(
         PatchMatrixConnectionPointDto input,
         PatchMatrixConnectionPointDto output,
+        int? patchId = null,
         CancellationToken ct = default)
     {
         var inputConnectionPointDto = new ConnectionPointDto
@@ -196,7 +198,7 @@ public partial class PatchesCLI
         var command = new AddConnectionCommand(
             input: inputConnectionPointDto,
             output: outputConnectionPointDto,
-            -1
+            patchId ?? -1
         );
 
         await AddConnectionHandler.HandleAsync(command, ct);

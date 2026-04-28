@@ -1,6 +1,4 @@
-using System;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
 using Patches.Infrastructure.Data;
@@ -15,12 +13,17 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
         context.Connections.Add(entity);
     }
 
-    public IQueryable<Connection> FindByCondition(Expression<Func<Connection, bool>> condition, bool trackChanges = false)
+    public IQueryable<Connection> FindByCondition(
+        Expression<Func<Connection, bool>> condition, 
+        bool trackChanges = false)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Connection?> FindByIdAsync(int id, CancellationToken ct = default)
+    public async Task<Connection?> FindByIdAsync(
+        int id,
+        bool trackChanges = false,
+        CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }

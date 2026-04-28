@@ -14,17 +14,24 @@ public class ModuleRepository(ApplicationDbContext context) : IRepository<Module
         context.Modules.Add(entity);
     }
 
-    public IQueryable<Module> FindByCondition(Expression<Func<Module, bool>> condition, bool trackChanges = false)
+    public IQueryable<Module> FindByCondition(
+        Expression<Func<Module, bool>> condition, 
+        bool trackChanges = false)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Module?> FindByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<Module?> FindByIdAsync(
+        Guid id, 
+        bool trackChanges = false, 
+        CancellationToken ct = default)
     {
-        return await context.Modules
-            .Include(m => m.ConnectionPoints)
-            .Include(m => m.Vendor)
-            .FirstOrDefaultAsync(m => m.Id == id, ct);
+        return await (!trackChanges 
+            ? context.Modules.AsNoTracking()
+            : context.Modules)
+                .Include(m => m.ConnectionPoints)
+                .Include(m => m.Vendor)
+                .FirstOrDefaultAsync(m => m.Id == id, ct);
     }
 
     public IEnumerable<Module> GetAll()

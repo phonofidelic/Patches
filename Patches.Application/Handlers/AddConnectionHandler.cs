@@ -16,58 +16,35 @@ public class AddConnectionHandler(
     private readonly IUnitOfWork unitOfWork = unitOfWork;
     public async Task<AddConnectionResult> HandleAsync(AddConnectionCommand command, CancellationToken ct = default)
     {
-        var inputConnectionPoint = await unitOfWork.ConnectionPoints.FindByIdAsync(command.Input.Id, ct);
-        if (inputConnectionPoint == null)
-        {
-            var module = await unitOfWork.Modules.FindByIdAsync(command.Input.ModuleId, ct)
-                ?? throw new Exception($"Could not find Module with ID '{command.Input.ModuleId}' when trying to create new ConnectionPoint '{command.Input.Name}'");
-            inputConnectionPoint = new ConnectionPoint
-            {
-                Name = command.Input.Name,
-                Module = module,
-                Type = new ConnectionPointType(command.Input.Type)
-            };
+        var inputConnectionPoint = await unitOfWork.ConnectionPoints
+            .FindByIdAsync(command.Input.Id, trackChanges: true, ct)
+                ?? throw new Exception($"Could not find input ConnectionPoint with Id '{command.Input.Id}'");
 
-            unitOfWork.ConnectionPoints.Add(inputConnectionPoint);
-        }
+        var outputConnectionPoint = await unitOfWork.ConnectionPoints
+            .FindByIdAsync(command.Output.Id, trackChanges: true, ct)
+                ?? throw new Exception($"Could not find output ConnectionPoint with Id '{command.Output.Id}'");
 
-        var outputConnectionPoint = await unitOfWork.ConnectionPoints.FindByIdAsync(command.Output.Id, ct);
-        if (outputConnectionPoint == null)
-        {
-            var module = await unitOfWork.Modules.FindByIdAsync(command.Output.ModuleId, ct)
-                ?? throw new Exception($"Could not find Module with ID '{command.Input.ModuleId}' when trying to create new ConnectionPoint '{command.Output.Name}'");
-            outputConnectionPoint = new ConnectionPoint
-            {
-                Name = command.Output.Name,
-                Module = module,
-                Type = new ConnectionPointType(command.Output.Type)
-            };
-
-            unitOfWork.ConnectionPoints.Add(outputConnectionPoint);
-        }
-
-
-        var patch = await unitOfWork.Patches.FindByIdAsync(command.PatchId, ct);
+        var patch = await unitOfWork.Patches
+            .FindByIdAsync(command.PatchId, trackChanges: true, ct);
 
         if (patch == null)
         {
             patch = new Patch
             {
-                Name = "Test Patch",
+                Name = "New Patch",
             };
             unitOfWork.Patches.Add(patch);
         }
 
         var connection = new Connection
         {
-            // InputId = inputConnectionPoint.Id,
-            // OutputId = inputConnectionPoint.Id,
-            Input = inputConnectionPoint,
-            Output = outputConnectionPoint,
+            PatchId = patch.Id,
+            InputId = inputConnectionPoint.Id,
+            OutputId = outputConnectionPoint.Id,
         };
         
         unitOfWork.Connections.Add(connection);
-        patch.Connections.Add(connection);
+        // patch.Connections.Add(connection);
 
         await unitOfWork.SaveChangesAsync();
 
