@@ -26,84 +26,11 @@ public partial class PatchesCLI
         ConsoleKeyInfo command;
         var position = new TablePosition();
 
-        // var random = new Random();
-        // // Add mock connection points
-        // foreach (var module in modules)
-        // {
-        //     module.ConnectionPoints.Add(new()
-        //     {
-        //         Id = random.Next(),
-        //         Name = "CV In",
-        //         ModuleName = module.Name,
-        //         ModuleId = module.Id,
-        //         Type = PatchMatrixConnectionPointType.Input
-        //     });
-        //     module.ConnectionPoints.Add(new()
-        //     {
-        //         Id = random.Next(),
-        //         Name = "Gate In",
-        //         ModuleName = module.Name,
-        //         ModuleId = module.Id,
-        //         Type = PatchMatrixConnectionPointType.Input
-        //     });
-        //     module.ConnectionPoints.Add(new()
-        //     {
-        //         Id = random.Next(),
-        //         Name = "CV Out",
-        //         ModuleName = module.Name,
-        //         ModuleId = module.Id,
-        //         Type = PatchMatrixConnectionPointType.Output
-        //     });
-        //     module.ConnectionPoints.Add(new()
-        //     {
-        //         Id = random.Next(),
-        //         Name = "Gate Out",
-        //         ModuleName = module.Name,
-        //         ModuleId = module.Id,
-        //         Type = PatchMatrixConnectionPointType.Output
-        //     });
-        // }
-
-        // List<PatchMatrixConnectionPointDto> columnConnectionPoints = [.. result.ConnectionPoints
-        //     .Where(c => 
-        //         c.Type.Name == "Input")];
         IReadOnlyList<PatchMatrixConnectionPointDto> columnConnectionPoints = result.Inputs;
-        
-        List<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
+        IReadOnlyList<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
 
-        // List<PatchMatrixConnectionPointDto> rowConnectionPoints = [.. result.ConnectionPoints
-        //     .Where(c => 
-        //         c.Type.Name == "Output")];
         IReadOnlyList<PatchMatrixConnectionPointDto> rowConnectionPoints = result.Outputs;
-        
-        List<string> rowConnectionPointNames = [.. rowConnectionPoints.Select(i => i.Name)];
-
-        // foreach (var module in modules)
-        // {
-        //     columnConnectionPoints = [
-        //         ..columnConnectionPoints, 
-        //         ..module.ConnectionPoints
-        //             .Where(c => 
-        //                 c.Type == PatchMatrixConnectionPointType.Input ||
-        //                 c.Type == PatchMatrixConnectionPointType.Multiple)
-        //             .ToList()];
-
-        //     columnConnectionPointNames = [
-        //         ..columnConnectionPointNames, 
-        //         ..columnConnectionPoints.Select(i => i.Name).ToList()];
-
-        //     rowConnectionPoints = [
-        //         ..rowConnectionPoints, 
-        //         ..module.ConnectionPoints
-        //             .Where(c => 
-        //                 c.Type == PatchMatrixConnectionPointType.Output ||
-        //                 c.Type == PatchMatrixConnectionPointType.Multiple)
-        //             .ToList()];
-
-        //     rowConnectionPointNames = [
-        //         ..rowConnectionPointNames,
-        //         ..rowConnectionPoints.Select(i => i.Name).ToList()];
-        // };
+        IReadOnlyList<string> rowConnectionPointNames = [.. rowConnectionPoints.Select(i => i.Name)];
 
         string moduleHeaderName = "MODULE";
         string signalTypeHeader = "SIGNAL";
