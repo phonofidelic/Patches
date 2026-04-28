@@ -36,15 +36,20 @@ public partial class PatchesCLI
         string signalTypeHeader = "SIGNAL";
         string connectionTypeHeader = "CONN.";
 
-        int maxColumnConnectionPointNameLength = columnConnectionPointNames.Max(n => n.Length);
+        int maxColumnConnectionPointNameLength = columnConnectionPointNames
+            .Select(c => c.Split(" ").First())
+            .Max(n => n.Length);
         
         int maxModuleNameHeaderLength = modules
             .Select(m => m.Name)
             .Append(moduleHeaderName)
             .Max(s => s.Length);
+
         int maxRowSignalTypeHeaderNameLength = rowConnectionPointNames
+            .Select(s => s.Split(" ").First())
             .Append(signalTypeHeader)
             .Max(s => s.Length);
+
         int maxRowConnectionTypeHeaderNameLength = rowConnectionPoints
             .Select(c => c.Name)
             .Append(connectionTypeHeader)
@@ -65,11 +70,14 @@ public partial class PatchesCLI
 
             foreach (var item in columnConnectionPoints.Select((input, index) => (input, index)))
             {
+                string signalName = item.input.Name.ToUpper()
+                            .Split(" ")
+                            .First();
                 string header = string.Join("\n", [
                         ..item.input.ModuleName.PadRight(5).Take(5).ToArray().Select(c => $" {c} "),
                         " - ",
-                        ..item.input.Name.ToUpper()
-                            .PadLeft((item.input.Name.Length + maxColumnConnectionPointNameLength)/2)
+                        ..signalName
+                            .PadLeft((signalName.Length + maxColumnConnectionPointNameLength)/2)
                             .PadRight(maxColumnConnectionPointNameLength)
                             .ToArray()
                             .Select(c => $" {c} "),
@@ -86,8 +94,14 @@ public partial class PatchesCLI
             foreach(var item in rowConnectionPoints.Select((output, index) => (output, index)))
             {
                 string style = item.index == position.Row ? "#000 on #FFF" : "#FFF";
-                string signalType = item.output.Name.ToUpper()
-                    .PadLeft((item.output.Name.Length + maxRowSignalTypeHeaderNameLength) / 2)
+                
+                string signalName = item.output.Name
+                    .ToUpper()
+                    .Split(" ")
+                    .First();
+
+                string signalType = signalName
+                    .PadLeft((signalName.Length + maxRowSignalTypeHeaderNameLength) / 2)
                     .PadRight(maxRowSignalTypeHeaderNameLength);
                 string connectionType = item.output.Type.Name
                     .ToUpper()[..3]
