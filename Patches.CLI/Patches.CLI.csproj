@@ -24,4 +24,10 @@
     <PackageReference Include="Spectre.Console" Version="0.55.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Fonts/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
