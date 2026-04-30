@@ -6,6 +6,8 @@ public interface IRepository<TEntity, TId>
 {
     void Add(TEntity entity);
 
+    void Remove(TEntity entity);
+
     IEnumerable<TEntity> GetAll();
     
     Task<TEntity?> FindByIdAsync(TId id, bool trackChanges = false, CancellationToken ct = default);
