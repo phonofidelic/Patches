@@ -33,7 +33,7 @@ public partial class PatchesCLI
             });
 
             var modules = result.Modules;
-            IReadOnlyList<ConnectionDto> connections = [.. result.Connections];
+            ConnectionDto[] connections = [.. result.Connections];
             List<int> connectedInputIds = [.. connections.Select(i => i.InputId)];
             List<int> connectedOutputIds = [.. connections.Select(i => i.OutputId)];
 
@@ -176,11 +176,11 @@ public partial class PatchesCLI
                     break;
                 
                 case ConsoleKey.Spacebar:
-                    var newConnection = await AddPatchMatrixConnectionAsync(
+                    connections = await ToggleConnectionAsync(
+                        connections,
                         input: columnConnectionPoints[position.Col],
                         output: rowConnectionPoints[position.Row],
                         patchId: selectedPatch?.Id);
-                    connections = [.. connections, newConnection];
                     break;
 
             }
@@ -190,35 +190,42 @@ public partial class PatchesCLI
         CurrentCommand = null;
     }
 
-    private async Task<ConnectionDto> AddPatchMatrixConnectionAsync(
+    private async Task<ConnectionDto[]> ToggleConnectionAsync(
+        ConnectionDto[] connections,
         PatchMatrixConnectionPointDto input,
         PatchMatrixConnectionPointDto output,
-        int? patchId = null,
+        int? patchId,
         CancellationToken ct = default)
     {
-        var inputConnectionPointDto = new ConnectionPointDto
+        var existing = connections.FirstOrDefault(c =>
+            c.InputId == input.Id &&
+            c.OutputId == output.Id &&
+            c.PatchId == patchId);
+
+        if (existing != null)
         {
-            Id = input.Id,
-            Name = input.Name,
-            ModuleId = input.ModuleId,
-            Type = input.Type.Name
-        };
+            await DeleteConnectionHandler.HandleAsync(
+                new DeleteConnectionCommand(existing.PatchId, existing.InputId, existing.OutputId), ct);
+            return [.. connections.Where(c =>
+                !(c.PatchId == existing.PatchId &&
+                  c.InputId == existing.InputId &&
+                  c.OutputId == existing.OutputId))];
+        }
 
-        var outputConnectionPointDto = new ConnectionPointDto
+        var inputDto = new ConnectionPointDto
         {
-            Id = output.Id,
-            Name = output.Name,
-            ModuleId = output.ModuleId,
-            Type = output.Type.Name
+            Id = input.Id, Name = input.Name,
+            ModuleId = input.ModuleId, Type = input.Type.Name
         };
-
-        var command = new AddConnectionCommand(
-            input: inputConnectionPointDto,
-            output: outputConnectionPointDto,
-            patchId ?? -1
-        );
-
-        var result = await AddConnectionHandler.HandleAsync(command, ct);
-        return result.Connection;
+        var outputDto = new ConnectionPointDto
+        {
+            Id = output.Id, Name = output.Name,
+            ModuleId = output.ModuleId, Type = output.Type.Name
+        };
+        var result = await AddConnectionHandler.HandleAsync(
+            new AddConnectionCommand(inputDto, outputDto, patchId ?? -1), ct);
+        return result.Connection != null
+            ? [.. connections, result.Connection]
+            : connections;
     }
 }

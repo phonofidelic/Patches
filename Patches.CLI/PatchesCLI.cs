@@ -15,6 +15,7 @@ public partial class PatchesCLI(
     IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
     IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
     IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
+    IHandler<DeleteConnectionCommand, DeleteConnectionResult> deleteConnectionHandler,
     IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
 {
     private readonly IConsoleUIService UI = ui;
@@ -25,6 +26,7 @@ public partial class PatchesCLI(
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
     private readonly IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
     private readonly IHandler<AddConnectionCommand, AddConnectionResult> AddConnectionHandler = addConnectionHandler;
+    private readonly IHandler<DeleteConnectionCommand, DeleteConnectionResult> DeleteConnectionHandler = deleteConnectionHandler;
     private readonly IHandler<ListPatchesQuery, ListPatchesQueryResult> ListPatchesHandler = listPatchesHandler;
     private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
