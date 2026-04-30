@@ -5,7 +5,9 @@ using Spectre.Console;
 
 namespace Patches.CLI.App;
 
-public class ImportModulesFromJsonForm(IConsoleUIService ui, IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler) : IScreen
+public class ImportModulesFromJsonForm(
+    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
+    IConsoleUIService ui) : IScreen
 {
     public async Task<string?> RunAsync()
     {

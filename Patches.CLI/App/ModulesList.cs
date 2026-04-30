@@ -4,7 +4,9 @@ using Patches.Shared.Queries;
 
 namespace Patches.CLI.App;
 
-public class ModulesList(IConsoleUIService ui, IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler) : IScreen
+public class ModulesList(
+    IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
+    IConsoleUIService ui) : IScreen
 {
     public async Task<string?> RunAsync()
     {

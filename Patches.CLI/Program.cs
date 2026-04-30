@@ -11,6 +11,8 @@ using Patches.Domain.Entities;
 using Patches.Shared.Queries;
 using Patches.Infrastructure.ModulargridApi;
 using Spectre.Console;
+using Patches.CLI.App;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var services = new ServiceCollection();
 
@@ -33,8 +35,6 @@ services.AddScoped<IRepository<Connection, int>, ConnectionRepository>();
 services.AddScoped<IRepository<Patch, int>, PatchRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-services.AddSingleton((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
-
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
@@ -44,8 +44,13 @@ services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConne
 services.AddScoped<IHandler<DeleteConnectionCommand, DeleteConnectionResult>, DeleteConnectionHandler>();
 services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
 
+services.AddSingleton((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
+services.AddSingleton<HelpScreen>();
+services.AddSingleton<ModulesList>();
+services.AddSingleton<AddModuleForm>();
+services.AddSingleton<ImportModulesFromJsonForm>();
 
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 services.AddScoped<IModulargridApiClient, ModulargridApiClient>();

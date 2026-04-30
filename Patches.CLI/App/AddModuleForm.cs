@@ -5,7 +5,10 @@ using Spectre.Console;
 
 namespace Patches.CLI.App;
 
-public class AddModuleForm(IConsoleUIService ui, IAnsiConsole ansiConsole, IHandler<AddModuleCommand, AddModuleResult> addModuleHandler) : IScreen
+public class AddModuleForm(
+    IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
+    IConsoleUIService ui, 
+    IAnsiConsole ansiConsole) : IScreen
 {
     private async Task<AddModuleCommand?> RenderForm()
     {
