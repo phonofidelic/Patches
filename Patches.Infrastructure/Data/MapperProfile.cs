@@ -29,8 +29,6 @@ public class MapperProfile: Profile
 
         CreateMap<Patch, PatchListItemDto>();
 
-        CreateMap<ConnectionPoint, ConnectionDto>();
-
         CreateMap<Connection, ConnectionDto>();
     }
 }
