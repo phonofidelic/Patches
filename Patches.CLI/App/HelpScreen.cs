@@ -1,17 +1,17 @@
-using Patches.CLI.App;
+using Patches.Application.Contracts;
+using Patches.CLI.App.Contracts;
 using Spectre.Console;
 
-namespace Patches.CLI;
+namespace Patches.CLI.App;
 
-public partial class PatchesCLI
+public class HelpScreen(IConsoleUIService ui, IAnsiConsole ansiConsole) : IScreen
 {
-    public void HelpScreen()
+    public Task<string?> RunAsync()
     {
-        UI.Clear();
-        AnsiConsole.Write(Align.Center(new HelpTable(), VerticalAlignment.Middle));
-        
-
-        AnsiConsole.Cursor.SetPosition(0, Console.WindowHeight);
-            CurrentCommand = AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
+        ui.Clear();
+        ansiConsole.Write(Align.Center(new HelpTable(), VerticalAlignment.Middle));
+        ansiConsole.Cursor.SetPosition(0, Console.WindowHeight);
+        return Task.FromResult(ansiConsole.Prompt(
+            new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false)));
     }
 }

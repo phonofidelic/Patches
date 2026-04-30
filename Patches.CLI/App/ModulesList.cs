@@ -1,36 +1,37 @@
-using System;
-using AutoMapper;
-using Patches.Application.Handlers;
+using Patches.Application.Contracts;
+using Patches.CLI.App.Contracts;
 using Patches.Shared.Queries;
 
-namespace Patches.CLI;
+namespace Patches.CLI.App;
 
-public partial class PatchesCLI
+public class ModulesList(
+    IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
+    IConsoleUIService ui) : IScreen
 {
-    private async Task ModulesList()
+    public async Task<string?> RunAsync()
     {
-        var result = await ListModulesHandler.HandleAsync(new ListModulesQuery());
+        var result = await listModulesHandler.HandleAsync(new ListModulesQuery());
         var moduleList = result.Modules;
 
-        UI.Clear();
-        UI.WriteLine("");
-        UI.WriteLine("Modules:");
-        UI.WriteLine("");
+        ui.Clear();
+        ui.WriteLine("");
+        ui.WriteLine("Modules:");
+        ui.WriteLine("");
 
         if (moduleList.Count < 1)
         {
-            UI.TextMiddle();
-            UI.WriteLine("\tAdded modules will show up here");
+            ui.TextMiddle();
+            ui.WriteLine("\tAdded modules will show up here");
         }
 
-        foreach (var item in moduleList.Select((m, i) => new {module = m, index = i }))
+        foreach (var item in moduleList.Select((m, i) => new { module = m, index = i }))
         {
-            UI.WriteLine($"{item.index + 1}\t{item.module.Name}");
+            ui.WriteLine($"{item.index + 1}\t{item.module.Name}");
         }
 
-        UI.TextBottom();
-        UI.WriteLine("Press any key to continue");
-        UI.ReadKey(intercept: true);
-        CurrentCommand = null;
+        ui.TextBottom();
+        ui.WriteLine("Press any key to continue");
+        ui.ReadKey(intercept: true);
+        return null;
     }
 }

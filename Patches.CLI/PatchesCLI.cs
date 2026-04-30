@@ -16,7 +16,11 @@ public partial class PatchesCLI(
     IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
     IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
     IHandler<DeleteConnectionCommand, DeleteConnectionResult> deleteConnectionHandler,
-    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
+    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler,
+    HelpScreen helpScreen,
+    ModulesList modulesListScreen,
+    AddModuleForm addModuleFormScreen,
+    ImportModulesFromJsonForm importModulesFromJsonScreen)
 {
     private readonly IConsoleUIService UI = ui;
     private readonly IAnsiConsole AnsiConsole = ansiConsole;
@@ -79,18 +83,18 @@ public partial class PatchesCLI(
             {
                 case "import-json":
                 case "ij":
-                    await ImportModulesFromJsonForm();
+                    CurrentCommand = await importModulesFromJsonScreen.RunAsync();
                     break;
 
                 case "add":
                 case "a":
-                    await AddModuleForm();
+                    CurrentCommand = await addModuleFormScreen.RunAsync();
                     break;
 
                 case "list":
                 case "ls":
                 case "l":
-                    await ModulesList();
+                    CurrentCommand = await modulesListScreen.RunAsync();
                     break;
 
                 case "new-patch":
@@ -106,7 +110,7 @@ public partial class PatchesCLI(
 
                 case "help":
                 case "h":
-                    HelpScreen();
+                    CurrentCommand = await helpScreen.RunAsync();
                     break;
 
                 case "quit":
