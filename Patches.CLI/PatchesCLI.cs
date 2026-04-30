@@ -1,53 +1,35 @@
 using Patches.Application.Contracts;
 using Patches.CLI.App;
 using Patches.Shared.Commands;
-using Patches.Shared.Queries;
 using Spectre.Console;
 
 namespace Patches.CLI;
 
-public partial class PatchesCLI(
+public class PatchesCLI(
     IConsoleUIService ui,
     IAnsiConsole ansiConsole,
-    IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
-    IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
-    IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
-    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-    IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
-    IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
-    IHandler<DeleteConnectionCommand, DeleteConnectionResult> deleteConnectionHandler,
-    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler,
+    IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initHandler,
     HelpScreen helpScreen,
     ModulesList modulesListScreen,
     AddModuleForm addModuleFormScreen,
-    ImportModulesFromJsonForm importModulesFromJsonScreen)
+    ImportModulesFromJsonForm importFromJsonScreen,
+    PatchMatrixScreen patchMatrixScreen,
+    LoadPatchScreen loadPatchScreen)
 {
-    private readonly IConsoleUIService UI = ui;
-    private readonly IAnsiConsole AnsiConsole = ansiConsole;
-    private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
-    private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
-    private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
-    private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
-    private readonly IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
-    private readonly IHandler<AddConnectionCommand, AddConnectionResult> AddConnectionHandler = addConnectionHandler;
-    private readonly IHandler<DeleteConnectionCommand, DeleteConnectionResult> DeleteConnectionHandler = deleteConnectionHandler;
-    private readonly IHandler<ListPatchesQuery, ListPatchesQueryResult> ListPatchesHandler = listPatchesHandler;
-    private InitializePatchMatrixResult? State { get; set; }
-    private string? CurrentCommand { get; set; } = null;
-    private IReadOnlyList<string> QuitCommands { get; } = ["q", "quit"];
+    private InitializePatchMatrixResult? _state;
+    private static readonly IReadOnlyList<string> QuitCommands = ["q", "quit"];
 
     public async Task InitAsync()
     {
-        State = await InitializePatchMatrixHandler.HandleAsync(new());
+        _state = await initHandler.HandleAsync(new());
         await RunAsync();
     }
 
     private async Task RunAsync()
     {
-        if (State is null) throw new Exception("State not initialized");
+        if (_state is null) throw new Exception("State not initialized");
 
         var banner = new Banner("Patches", "v0.1");
-
         var helpTable = new HelpTable();
 
         var rootLayout = new Layout("Root")
@@ -57,79 +39,49 @@ public partial class PatchesCLI(
 
         var top = rootLayout["Top"];
         var bottom = rootLayout["Bottom"];
-        
-        top.Update(new Rows(
-            banner,
-            helpTable));
 
+        top.Update(new Rows(banner, helpTable));
         bottom.Update(new Rows());
+
+        string? currentCommand = null;
+
+        string? HandleUnknown(string? cmd)
+        {
+            bottom.Update(Align.Left(
+                new Rows(new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(cmd ?? "")}'[/]")),
+                VerticalAlignment.Middle));
+            return null;
+        }
 
         do
         {
-            UI.Clear();
-            AnsiConsole.Write(rootLayout);
-            
+            ui.Clear();
+            ansiConsole.Write(rootLayout);
+
             top.Update(new Rows(
                 Console.WindowHeight > 38 ? banner : new Markup("[bold #FFD787]Patches[/]"),
-                helpTable
-            ));
+                helpTable));
 
             bottom.Update(new Rows());
- 
-            AnsiConsole.Cursor.SetPosition(0, Console.WindowHeight);
-            CurrentCommand ??= AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
 
-            switch (CurrentCommand)
+            ansiConsole.Cursor.SetPosition(0, Console.WindowHeight);
+            currentCommand ??= ansiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
+
+            currentCommand = currentCommand switch
             {
-                case "import-json":
-                case "ij":
-                    CurrentCommand = await importModulesFromJsonScreen.RunAsync();
-                    break;
+                "import-json" or "ij"            => await importFromJsonScreen.RunAsync(),
+                "add"        or "a"               => await addModuleFormScreen.RunAsync(),
+                "list"       or "ls" or "l"       => await modulesListScreen.RunAsync(),
+                "new-patch"  or "np" or "new"     => await patchMatrixScreen.RunAsync(),
+                "load-patch" or "lp"              => await loadPatchScreen.RunAsync(),
+                "help"       or "h"               => await helpScreen.RunAsync(),
+                "quit"       or "q" or null       => currentCommand,
+                _                                 => HandleUnknown(currentCommand),
+            };
 
-                case "add":
-                case "a":
-                    CurrentCommand = await addModuleFormScreen.RunAsync();
-                    break;
+        } while (!QuitCommands.Contains(currentCommand));
 
-                case "list":
-                case "ls":
-                case "l":
-                    CurrentCommand = await modulesListScreen.RunAsync();
-                    break;
-
-                case "new-patch":
-                case "np":
-                case "new":
-                    await RenderPatchMatrixScreenAsync();
-                    break;
-
-                case "load-patch":
-                case "lp":
-                    await RenderLoadPatchScreenAsync();
-                    break;
-
-                case "help":
-                case "h":
-                    CurrentCommand = await helpScreen.RunAsync();
-                    break;
-
-                case "quit":
-                case "q":
-                case null:
-                    break;
-
-                default: 
-                    bottom.Update(Align.Left(
-                        new Rows(
-                            new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(CurrentCommand)}'[/]")),
-                        VerticalAlignment.Middle));
-                    CurrentCommand = null;
-                    break;
-            }
-
-        } while (!QuitCommands.Contains(CurrentCommand));
-
-        UI.WriteLine("Exiting");
-        UI.Clear();
+        ui.WriteLine("Exiting");
+        ui.Clear();
     }
 }

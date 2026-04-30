@@ -1,39 +1,35 @@
+using Patches.Application.Contracts;
+using Patches.CLI.App.Contracts;
 using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 using Spectre.Console;
 
-namespace Patches.CLI;
+namespace Patches.CLI.App;
 
-
-public partial class PatchesCLI
+public class LoadPatchScreen(
+    IConsoleUIService ui,
+    IAnsiConsole ansiConsole,
+    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler,
+    PatchMatrixScreen patchMatrixScreen) : IScreen
 {
-    private async Task RenderLoadPatchScreenAsync()
+    public async Task<string?> RunAsync()
     {
-        PatchListItemDto? selectedPatch;
-        var result = await ListPatchesHandler.HandleAsync(new ListPatchesQuery());
-
+        var result = await listPatchesHandler.HandleAsync(new ListPatchesQuery());
         if (result.Patches.Count < 1)
-        {
-            // ToDo: Show prompt to create a new patch or return to home screen
-            CurrentCommand = null;
-            return;
-        }
+            return null;
 
         var choices = new SelectionPrompt<PatchListItemDto>()
-        {
-            Converter = p => $"[#FFF]{p.Name}[/]",
-        };
-        choices
             .Title("[#FFD787 bold]Load a saved Patch:[/]")
             .HighlightStyle(new Style(Color.LightGoldenrod2_2, Console.BackgroundColor, Decoration.Bold))
+            .UseConverter(p => $"[#FFF]{p.Name}[/]")
             .AddChoices(result.Patches);
-        
-        UI.Clear();
-        selectedPatch = AnsiConsole.Prompt(choices);
 
-        if (selectedPatch != null)
-            await RenderPatchMatrixScreenAsync(selectedPatch);
+        ui.Clear();
+        var loadPatchResult = new LoadPatchResult(ansiConsole.Prompt(choices));
 
-        CurrentCommand = null;
+        if (loadPatchResult.SelectedPatch != null)
+            await patchMatrixScreen.RunAsync(loadPatchResult.SelectedPatch);
+
+        return null;
     }
 }

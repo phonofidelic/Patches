@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Patches.Application.Contracts;
 using Patches.Services;
 using Patches.CLI;
@@ -46,11 +46,13 @@ services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatch
 
 services.AddSingleton((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
-services.AddSingleton<PatchesCLI>();
 services.AddSingleton<HelpScreen>();
-services.AddSingleton<ModulesList>();
-services.AddSingleton<AddModuleForm>();
-services.AddSingleton<ImportModulesFromJsonForm>();
+services.AddScoped<ModulesList>();
+services.AddScoped<AddModuleForm>();
+services.AddScoped<ImportModulesFromJsonForm>();
+services.AddScoped<PatchMatrixScreen>();
+services.AddScoped<LoadPatchScreen>();
+services.AddSingleton<PatchesCLI>();
 
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 services.AddScoped<IModulargridApiClient, ModulargridApiClient>();

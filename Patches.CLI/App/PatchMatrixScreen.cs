@@ -1,33 +1,28 @@
-using System;
-using System.Drawing;
+using Patches.Application.Contracts;
+using Patches.CLI.App.Contracts;
 using Patches.Shared.Commands;
 using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 using Spectre.Console;
 
-namespace Patches.CLI;
+namespace Patches.CLI.App;
 
-public class TablePosition()
+public class PatchMatrixScreen(
+    IConsoleUIService ui,
+    IAnsiConsole ansiConsole,
+    IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesHandler,
+    IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
+    IHandler<DeleteConnectionCommand, DeleteConnectionResult> deleteConnectionHandler) : IScreen
 {
-    public int Row { get; private set; }
-    public int Col { get; private set; }
+    public Task<string?> RunAsync() => RunAsync(null);
 
-    public void MoveRight() => Col++;
-    public void MoveLeft() => Col--;
-    public void MoveDown() => Row++;
-    public void MoveUp() => Row--;
-}
-public partial class PatchesCLI
-{
-    public async Task RenderPatchMatrixScreenAsync(PatchListItemDto? selectedPatch = null)
+    public async Task<string?> RunAsync(PatchListItemDto? selectedPatch)
     {
         ConsoleKeyInfo command;
         var position = new TablePosition();
-        // Render loop
         do
         {
-
-            var result = await GetModulesForPatchMatrixHandler.HandleAsync(new LoadPatchMatrixQuery()
+            var result = await getModulesHandler.HandleAsync(new LoadPatchMatrixQuery()
             {
                 PatchId = selectedPatch?.Id
             });
@@ -50,7 +45,7 @@ public partial class PatchesCLI
             int maxColumnConnectionPointNameLength = columnConnectionPointNames
                 .Select(c => c.Split(" ").First())
                 .Max(n => n.Length);
-            
+
             int maxModuleNameHeaderLength = modules
                 .Select(m => m.Name)
                 .Append(moduleHeaderName)
@@ -65,13 +60,11 @@ public partial class PatchesCLI
                 .Select(c => c.Name)
                 .Append(connectionTypeHeader)
                 .Max(s => s.Length);
-            
+
             int columnCount = columnConnectionPoints.Count;
-            
             int rowCount = rowConnectionPoints.Count;
 
-        
-            UI.Clear();
+            ui.Clear();
 
             var patchMatrix = new Table()
                 .NoBorder()
@@ -86,24 +79,23 @@ public partial class PatchesCLI
                         ..item.input.ModuleName.PadRight(5).Take(5).ToArray().Select(c => $" {c} "),
                         " - ",
                         ..signalName
-                            .PadLeft((signalName.Length + maxColumnConnectionPointNameLength)/2)
+                            .PadLeft((signalName.Length + maxColumnConnectionPointNameLength) / 2)
                             .PadRight(maxColumnConnectionPointNameLength)
                             .ToArray()
                             .Select(c => $" {c} "),
                         " - ",
                         ..item.input.Type.Name.ToUpper().ToArray().Take(2).Select(c => $" {c} ")]);
-                    string style = position.Col == item.index ? "#000 on #FFF" : "#FFF";
-                    patchMatrix.AddColumn($"[{style}]{header}[/]");
+                string style = position.Col == item.index ? "#000 on #FFF" : "#FFF";
+                patchMatrix.AddColumn($"[{style}]{header}[/]");
             }
 
-            
             patchMatrix.AddRow($"[#FFF]{moduleHeaderName.PadRight(maxModuleNameHeaderLength, '_')}|{signalTypeHeader.PadLeft(maxRowSignalTypeHeaderNameLength / 2).PadRight(maxRowSignalTypeHeaderNameLength)}|{connectionTypeHeader.PadLeft(maxRowConnectionTypeHeaderNameLength / 2).PadRight(maxRowSignalTypeHeaderNameLength)}[/]");
             patchMatrix.AddEmptyRow();
 
-            foreach(var item in rowConnectionPoints.Select((output, index) => (output, index)))
+            foreach (var item in rowConnectionPoints.Select((output, index) => (output, index)))
             {
                 string style = item.index == position.Row ? "#000 on #FFF" : "#FFF";
-                
+
                 string signalName = item.output.Name
                     .ToUpper()
                     .Split(" ")
@@ -124,39 +116,39 @@ public partial class PatchesCLI
                     var output = item.output;
                     var input = columnConnectionPoints[i];
 
-                    bool hasPatch = connections.FirstOrDefault(c => 
-                        c.OutputId == output.Id && 
-                        c.InputId == input.Id && 
+                    bool hasPatch = connections.FirstOrDefault(c =>
+                        c.OutputId == output.Id &&
+                        c.InputId == input.Id &&
                         c.PatchId == selectedPatch?.Id) != null;
 
                     string cellContent = hasPatch ? "•" : " ";
 
-                    var cell = position.Row == item.index && position.Col == i 
+                    var cell = position.Row == item.index && position.Col == i
                         ? $"[#000 on #FFD787][[{cellContent}]][/]"
                         : $"[#FFD787][[{cellContent}]][/]";
 
                     cells.Add(cell);
                 }
 
-                patchMatrix.AddRow([header, ..cells]);
+                patchMatrix.AddRow([header, .. cells]);
             }
 
             if (selectedPatch != null)
             {
-                AnsiConsole.MarkupLine($"[#FFD787 bold]{selectedPatch.Name}[/]");
-                AnsiConsole.MarkupLine($"[#FFD787]\n{selectedPatch.Description}[/]");
+                ansiConsole.MarkupLine($"[#FFD787 bold]{selectedPatch.Name}[/]");
+                ansiConsole.MarkupLine($"[#FFD787]\n{selectedPatch.Description}[/]");
             }
 
-            AnsiConsole.Write(patchMatrix);
+            ansiConsole.Write(patchMatrix);
 
-            AnsiConsole.WriteLine("");
-            AnsiConsole.WriteLine("Press Escape to exit");
+            ansiConsole.WriteLine("");
+            ansiConsole.WriteLine("Press Escape to exit");
 
-            command = UI.ReadKey(intercept: true);
-            switch(command.Key)
+            command = ui.ReadKey(intercept: true);
+            switch (command.Key)
             {
                 case ConsoleKey.RightArrow:
-                    if (position.Col < columnConnectionPoints.Count -1)
+                    if (position.Col < columnConnectionPoints.Count - 1)
                         position.MoveRight();
                     break;
 
@@ -166,7 +158,7 @@ public partial class PatchesCLI
                     break;
 
                 case ConsoleKey.DownArrow:
-                    if (position.Row < rowConnectionPoints.Count -1)
+                    if (position.Row < rowConnectionPoints.Count - 1)
                         position.MoveDown();
                     break;
 
@@ -174,7 +166,7 @@ public partial class PatchesCLI
                     if (position.Row > 0)
                         position.MoveUp();
                     break;
-                
+
                 case ConsoleKey.Spacebar:
                     connections = await ToggleConnectionAsync(
                         connections,
@@ -182,12 +174,22 @@ public partial class PatchesCLI
                         output: rowConnectionPoints[position.Row],
                         patchId: selectedPatch?.Id);
                     break;
-
             }
-                
+
         } while (command.Key != ConsoleKey.Escape);
 
-        CurrentCommand = null;
+        return null;
+    }
+
+    private class TablePosition
+    {
+        public int Row { get; private set; }
+        public int Col { get; private set; }
+
+        public void MoveRight() => Col++;
+        public void MoveLeft() => Col--;
+        public void MoveDown() => Row++;
+        public void MoveUp() => Row--;
     }
 
     private async Task<ConnectionDto[]> ToggleConnectionAsync(
@@ -204,7 +206,7 @@ public partial class PatchesCLI
 
         if (existing != null)
         {
-            await DeleteConnectionHandler.HandleAsync(
+            await deleteConnectionHandler.HandleAsync(
                 new DeleteConnectionCommand(existing.PatchId, existing.InputId, existing.OutputId), ct);
             return [.. connections.Where(c =>
                 !(c.PatchId == existing.PatchId &&
@@ -222,7 +224,7 @@ public partial class PatchesCLI
             Id = output.Id, Name = output.Name,
             ModuleId = output.ModuleId, Type = output.Type.Name
         };
-        var result = await AddConnectionHandler.HandleAsync(
+        var result = await addConnectionHandler.HandleAsync(
             new AddConnectionCommand(inputDto, outputDto, patchId ?? -1), ct);
         return result.Connection != null
             ? [.. connections, result.Connection]
