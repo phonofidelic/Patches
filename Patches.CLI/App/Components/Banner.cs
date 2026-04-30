@@ -1,3 +1,4 @@
+using System.Reflection;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -7,7 +8,11 @@ public class Banner(string title, string? subtitle = null) : IRenderable
 {
     private string Title { get; init; } = title;
     private string? Subtitle { get; init; } = subtitle;
-    private FigletFont Font { get; set; } = FigletFont.Load("Fonts/isometric1.flf");
+
+    private static readonly string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+        ?? throw new Exception("Could not load assembly directory");
+    private static readonly string fontPath = Path.Combine(assemblyDir, "Fonts", "isometric1.flf");
+    private FigletFont Font { get; set; } = FigletFont.Load(fontPath);
 
     public int Height { get => Console.WindowHeight > 38 ? Font.Height + (Subtitle != null ? 1 : 0) : 1;}
     

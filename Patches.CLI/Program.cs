@@ -10,6 +10,7 @@ using Patches.Infrastructure.Repositories;
 using Patches.Domain.Entities;
 using Patches.Shared.Queries;
 using Patches.Infrastructure.ModulargridApi;
+using Spectre.Console;
 
 var services = new ServiceCollection();
 
@@ -25,15 +26,22 @@ services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 services.AddLogging();
-services.AddScoped<IRepository<Module>, ModuleRepository>();
-services.AddScoped<IRepository<Vendor>, VendorRepository>();
+services.AddScoped<IRepository<Module, Guid>, ModuleRepository>();
+services.AddScoped<IRepository<Vendor, Guid>, VendorRepository>();
+services.AddScoped<IRepository<ConnectionPoint, int>, ConnectionPointRepository>();
+services.AddScoped<IRepository<Connection, int>, ConnectionRepository>();
+services.AddScoped<IRepository<Patch, int>, PatchRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+services.AddSingleton((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
 
 services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
-services.AddScoped<IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult>, GetModulesForPatchMatrixHandler>();
+services.AddScoped<IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult>, LoadPatchMatrixHandler>();
+services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConnectionHandler>();
+services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
 
 services.AddSingleton<IConsoleUIService, ConsoleUIService>();
 services.AddSingleton<PatchesCLI>();
@@ -47,6 +55,14 @@ using (var scope = serviceProvider.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+
+    if (!await db.ConnectionPointTypes.AnyAsync())
+    {
+        var input = new ConnectionPointType("Input");
+        var output = new ConnectionPointType("Output");
+        db.ConnectionPointTypes.AddRange([input, output]);
+        await db.SaveChangesAsync();
+    }
 }
 
 var patches = serviceProvider.GetRequiredService<PatchesCLI>();

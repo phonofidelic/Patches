@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patches.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using Patches.Infrastructure.Data;
 namespace Patches.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426163633_AddConnectionEntity")]
+    partial class AddConnectionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -50,31 +53,11 @@ namespace Patches.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ModuleId");
 
-                    b.HasIndex("TypeId");
-
                     b.ToTable("ConnectionPoints");
-                });
-
-            modelBuilder.Entity("Patches.Domain.Entities.ConnectionPointType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConnectionPointTypes");
                 });
 
             modelBuilder.Entity("Patches.Domain.Entities.Module", b =>
@@ -128,7 +111,7 @@ namespace Patches.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patches");
+                    b.ToTable("Patch");
                 });
 
             modelBuilder.Entity("Patches.Domain.Entities.Vendor", b =>
@@ -144,6 +127,15 @@ namespace Patches.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vendors");
+                });
+
+            modelBuilder.Entity("Patches.Domain.ValueObjects.ConnectionPointType", b =>
+                {
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("ConnectionPointType");
                 });
 
             modelBuilder.Entity("Patches.Domain.Entities.Connection", b =>
@@ -181,15 +173,7 @@ namespace Patches.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patches.Domain.Entities.ConnectionPointType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Module");
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Patches.Domain.Entities.Module", b =>

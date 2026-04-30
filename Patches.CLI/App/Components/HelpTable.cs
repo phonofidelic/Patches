@@ -21,6 +21,8 @@ public class HelpTable : IRenderable
             .AddEmptyRow()
             .AddRow("[bold #FFD787]new-patch[/]", "Open a new patch matrix")
             .AddEmptyRow()
+            .AddRow("[bold #FFD787]load-patch[/]", "Load a saved patch matrix")
+            .AddEmptyRow()
             .AddRow("[bold #FFD787]help[/]", "Display available commands")
             .AddEmptyRow()
             .AddRow("[bold #FFD787]quit[/]", "Quit Patches");

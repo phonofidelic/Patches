@@ -12,7 +12,9 @@ public class AddModuleHandler(
 {
     private readonly IMapper mapper = mapper;
     private readonly IUnitOfWork repository = unitOfWork;
-    public async Task<AddModuleResult> HandleAsync(AddModuleCommand command)
+    public async Task<AddModuleResult> HandleAsync(
+        AddModuleCommand command,
+        CancellationToken ct = default)
     {
         var module = mapper.Map<Module>(command);
 

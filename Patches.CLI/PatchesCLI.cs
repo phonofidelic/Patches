@@ -7,19 +7,25 @@ using Spectre.Console;
 namespace Patches.CLI;
 
 public partial class PatchesCLI(
-        IConsoleUIService ui,
-        IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
-        IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
-        IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
-        IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-        IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> getModulesForPatchMatrixHandler)
+    IConsoleUIService ui,
+    IAnsiConsole ansiConsole,
+    IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initializePatchMatrixHandler,
+    IHandler<AddModuleCommand, AddModuleResult> addModuleHandler,
+    IHandler<ListModulesQuery, ListModulesQueryResult> listModulesHandler,
+    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
+    IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> getModulesForPatchMatrixHandler,
+    IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
+    IHandler<ListPatchesQuery, ListPatchesQueryResult> listPatchesHandler)
 {
     private readonly IConsoleUIService UI = ui;
+    private readonly IAnsiConsole AnsiConsole = ansiConsole;
     private readonly IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> InitializePatchMatrixHandler = initializePatchMatrixHandler;
     private readonly IHandler<AddModuleCommand, AddModuleResult> AddModuleHandler = addModuleHandler;
     private readonly IHandler<ListModulesQuery, ListModulesQueryResult> ListModulesHandler = listModulesHandler;
     private readonly IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> ImportFromJsonHandler = importFromJsonHandler;
-    private readonly IHandler<GetModulesForPatchMatrixQuery, GetModulesForPatchMatrixQueryResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
+    private readonly IHandler<LoadPatchMatrixQuery, LoadPatchMatrixResult> GetModulesForPatchMatrixHandler = getModulesForPatchMatrixHandler;
+    private readonly IHandler<AddConnectionCommand, AddConnectionResult> AddConnectionHandler = addConnectionHandler;
+    private readonly IHandler<ListPatchesQuery, ListPatchesQueryResult> ListPatchesHandler = listPatchesHandler;
     private InitializePatchMatrixResult? State { get; set; }
     private string? CurrentCommand { get; set; } = null;
     private IReadOnlyList<string> QuitCommands { get; } = ["q", "quit"];
@@ -41,20 +47,18 @@ public partial class PatchesCLI(
         var rootLayout = new Layout("Root")
             .SplitRows(
                 new Layout("Top").Size(banner.Height + helpTable.Height + 6),
-                new Layout("Bottom")
-            );
+                new Layout("Bottom"));
 
         var top = rootLayout["Top"];
         var bottom = rootLayout["Bottom"];
         
         top.Update(new Rows(
             banner,
-            helpTable
-        ));
+            helpTable));
 
         bottom.Update(new Rows());
 
-        while (!QuitCommands.Contains(CurrentCommand))
+        do
         {
             UI.Clear();
             AnsiConsole.Write(rootLayout);
@@ -67,7 +71,7 @@ public partial class PatchesCLI(
             bottom.Update(new Rows());
  
             AnsiConsole.Cursor.SetPosition(0, Console.WindowHeight);
-            CurrentCommand = AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
+            CurrentCommand ??= AnsiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
 
             switch (CurrentCommand)
             {
@@ -93,22 +97,31 @@ public partial class PatchesCLI(
                     await RenderPatchMatrixScreenAsync();
                     break;
 
+                case "load-patch":
+                case "lp":
+                    await RenderLoadPatchScreenAsync();
+                    break;
+
                 case "help":
                 case "h":
                     HelpScreen();
                     break;
 
+                case "quit":
+                case "q":
                 case null:
                     break;
 
                 default: 
                     bottom.Update(Align.Left(
                         new Rows(
-                            new Markup($"[red]Unknown command: '{Markup.Escape(CurrentCommand)}'[/]")),
+                            new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(CurrentCommand)}'[/]")),
                         VerticalAlignment.Middle));
+                    CurrentCommand = null;
                     break;
             }
-        }
+
+        } while (!QuitCommands.Contains(CurrentCommand));
 
         UI.WriteLine("Exiting");
         UI.Clear();

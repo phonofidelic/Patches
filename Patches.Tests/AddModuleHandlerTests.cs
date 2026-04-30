@@ -12,7 +12,7 @@ public class AddModuleHandlerTests
 {
     private readonly IMapper _mapper = Substitute.For<IMapper>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
-    private readonly IRepository<Module> _modules = Substitute.For<IRepository<Module>>();
+    private readonly IRepository<Module, Guid> _modules = Substitute.For<IRepository<Module, Guid>>();
 
     public AddModuleHandlerTests()
     {

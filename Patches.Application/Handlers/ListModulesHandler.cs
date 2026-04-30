@@ -11,7 +11,9 @@ public class ListModulesHandler(
 {
     private readonly IMapper mapper = mapper;
     private readonly IUnitOfWork repository = unitOfWork;
-    public async Task<ListModulesQueryResult> HandleAsync(ListModulesQuery request)
+    public async Task<ListModulesQueryResult> HandleAsync(
+        ListModulesQuery request,
+        CancellationToken ct = default)
     {
         var modules = repository.Modules.GetAll()
             .Select(mapper.Map<ModuleListItem>)

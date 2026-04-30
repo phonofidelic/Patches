@@ -1,5 +1,7 @@
 using System;
 using System.Drawing;
+using Patches.Shared.Commands;
+using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 using Spectre.Console;
 
@@ -17,113 +19,58 @@ public class TablePosition()
 }
 public partial class PatchesCLI
 {
-    public async Task RenderPatchMatrixScreenAsync()
+    public async Task RenderPatchMatrixScreenAsync(PatchListItemDto? selectedPatch = null)
     {
-        var result = await GetModulesForPatchMatrixHandler.HandleAsync(new GetModulesForPatchMatrixQuery());
-        var modules = result.Modules;
         ConsoleKeyInfo command;
         var position = new TablePosition();
-
-        var random = new Random();
-        // Add mock connection points
-        foreach ( var module in modules)
-        {
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "CV",
-                ModuleName = module.Name,
-                Type = PatchMatrixConnectionPointType.Input
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "Gate",
-                ModuleName = module.Name,
-                Type = PatchMatrixConnectionPointType.Input
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "CV",
-                ModuleName = module.Name,
-                Type = PatchMatrixConnectionPointType.Output
-            });
-            module.ConnectionPoints.Add(new()
-            {
-                Id = random.Next(),
-                Name = "Gate",
-                ModuleName = module.Name,
-                Type = PatchMatrixConnectionPointType.Output
-            });
-        }
-
-        List<PatchMatrixConnectionPointDto> columnConnectionPoints = [];
-        List<string> columnConnectionPointNames = [];
-
-        List<PatchMatrixConnectionPointDto> rowConnectionPoints = [];
-        List<string> rowConnectionPointNames = [];
-
-        foreach (var module in modules)
-        {
-            columnConnectionPoints = [
-                ..columnConnectionPoints, 
-                ..module.ConnectionPoints
-                    .Where(c => 
-                        c.Type == PatchMatrixConnectionPointType.Input ||
-                        c.Type == PatchMatrixConnectionPointType.Multiple)
-                    .ToList()];
-
-            columnConnectionPointNames = [
-                ..columnConnectionPointNames, 
-                ..columnConnectionPoints.Select(i => i.Name).ToList()];
-
-            rowConnectionPoints = [
-                ..rowConnectionPoints, 
-                ..module.ConnectionPoints
-                    .Where(c => 
-                        c.Type == PatchMatrixConnectionPointType.Output ||
-                        c.Type == PatchMatrixConnectionPointType.Multiple)
-                    .ToList()];
-
-            rowConnectionPointNames = [
-                ..rowConnectionPointNames,
-                ..rowConnectionPoints.Select(i => i.Name).ToList()];
-        };
-
-        string moduleHeaderName = "MODULE";
-        string signalTypeHeader = "SIGNAL";
-        string connectionTypeHeader = "CONN.";
-
-        int maxColumnConnectionPointNameLength = columnConnectionPointNames.Max(n => n.Length);
-        
-        int maxModuleNameHeaderLength = modules
-            .Select(m => m.Name)
-            .Append(moduleHeaderName)
-            .Max(s => s.Length);
-        int maxRowSignalTypeHeaderNameLength = rowConnectionPointNames
-            .Append(signalTypeHeader)
-            .Max(s => s.Length);
-        int maxRowConnectionTypeHeaderNameLength = rowConnectionPoints
-            .Select(c => c.Name)
-            .Append(connectionTypeHeader)
-            .Max(s => s.Length);
-        
-        int columnCount = modules
-            .Sum(m => m.ConnectionPoints
-                .Count(c => 
-                    c.Type == PatchMatrixConnectionPointType.Input ||
-                    c.Type == PatchMatrixConnectionPointType.Multiple));
-        
-        int rowCount = modules
-            .Sum(m => m.ConnectionPoints
-                .Count(
-                    c => c.Type == PatchMatrixConnectionPointType.Output ||
-                    c.Type == PatchMatrixConnectionPointType.Multiple));
-
         // Render loop
         do
         {
+
+            var result = await GetModulesForPatchMatrixHandler.HandleAsync(new LoadPatchMatrixQuery()
+            {
+                PatchId = selectedPatch?.Id
+            });
+
+            var modules = result.Modules;
+            IReadOnlyList<ConnectionDto> connections = [.. result.Connections];
+            List<int> connectedInputIds = [.. connections.Select(i => i.InputId)];
+            List<int> connectedOutputIds = [.. connections.Select(i => i.OutputId)];
+
+            IReadOnlyList<PatchMatrixConnectionPointDto> columnConnectionPoints = result.Inputs;
+            IReadOnlyList<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
+
+            IReadOnlyList<PatchMatrixConnectionPointDto> rowConnectionPoints = result.Outputs;
+            IReadOnlyList<string> rowConnectionPointNames = [.. rowConnectionPoints.Select(i => i.Name)];
+
+            string moduleHeaderName = "MODULE";
+            string signalTypeHeader = "SIGNAL";
+            string connectionTypeHeader = "CONN.";
+
+            int maxColumnConnectionPointNameLength = columnConnectionPointNames
+                .Select(c => c.Split(" ").First())
+                .Max(n => n.Length);
+            
+            int maxModuleNameHeaderLength = modules
+                .Select(m => m.Name)
+                .Append(moduleHeaderName)
+                .Max(s => s.Length);
+
+            int maxRowSignalTypeHeaderNameLength = rowConnectionPointNames
+                .Select(s => s.Split(" ").First())
+                .Append(signalTypeHeader)
+                .Max(s => s.Length);
+
+            int maxRowConnectionTypeHeaderNameLength = rowConnectionPoints
+                .Select(c => c.Name)
+                .Append(connectionTypeHeader)
+                .Max(s => s.Length);
+            
+            int columnCount = columnConnectionPoints.Count;
+            
+            int rowCount = rowConnectionPoints.Count;
+
+        
             UI.Clear();
 
             var patchMatrix = new Table()
@@ -132,16 +79,19 @@ public partial class PatchesCLI
 
             foreach (var item in columnConnectionPoints.Select((input, index) => (input, index)))
             {
+                string signalName = item.input.Name.ToUpper()
+                            .Split(" ")
+                            .First();
                 string header = string.Join("\n", [
                         ..item.input.ModuleName.PadRight(5).Take(5).ToArray().Select(c => $" {c} "),
                         " - ",
-                        ..item.input.Name.ToUpper()
-                            .PadLeft((item.input.Name.Length + maxColumnConnectionPointNameLength)/2)
+                        ..signalName
+                            .PadLeft((signalName.Length + maxColumnConnectionPointNameLength)/2)
                             .PadRight(maxColumnConnectionPointNameLength)
                             .ToArray()
                             .Select(c => $" {c} "),
                         " - ",
-                        ..item.input.Type.ToString().ToUpper().ToArray().Take(2).Select(c => $" {c} ")]);
+                        ..item.input.Type.Name.ToUpper().ToArray().Take(2).Select(c => $" {c} ")]);
                     string style = position.Col == item.index ? "#000 on #FFF" : "#FFF";
                     patchMatrix.AddColumn($"[{style}]{header}[/]");
             }
@@ -153,27 +103,48 @@ public partial class PatchesCLI
             foreach(var item in rowConnectionPoints.Select((output, index) => (output, index)))
             {
                 string style = item.index == position.Row ? "#000 on #FFF" : "#FFF";
-                string signalType = item.output.Name.ToUpper()
-                    .PadLeft((item.output.Name.Length + maxRowSignalTypeHeaderNameLength) / 2)
+                
+                string signalName = item.output.Name
+                    .ToUpper()
+                    .Split(" ")
+                    .First();
+
+                string signalType = signalName
+                    .PadLeft((signalName.Length + maxRowSignalTypeHeaderNameLength) / 2)
                     .PadRight(maxRowSignalTypeHeaderNameLength);
-                string connectionType = item.output.Type
-                    .ToString()
+                string connectionType = item.output.Type.Name
                     .ToUpper()[..3]
                     .PadLeft((3 + maxRowSignalTypeHeaderNameLength) / 2)
                     .PadRight(maxRowSignalTypeHeaderNameLength);
                 string header = $"[{style}]{item.output.ModuleName.PadRight(maxModuleNameHeaderLength, '_')}|{signalType}|{connectionType}[/]";
                 List<string> cells = [];
-                
+
                 for (int i = 0; i < columnCount; i++)
                 {
+                    var output = item.output;
+                    var input = columnConnectionPoints[i];
+
+                    bool hasPatch = connections.FirstOrDefault(c => 
+                        c.OutputId == output.Id && 
+                        c.InputId == input.Id && 
+                        c.PatchId == selectedPatch?.Id) != null;
+
+                    string cellContent = hasPatch ? "•" : " ";
+
                     var cell = position.Row == item.index && position.Col == i 
-                        ? "[#000 on #FFD787][[ ]][/]"
-                        : "[#FFD787][[ ]][/]";
+                        ? $"[#000 on #FFD787][[{cellContent}]][/]"
+                        : $"[#FFD787][[{cellContent}]][/]";
 
                     cells.Add(cell);
                 }
 
                 patchMatrix.AddRow([header, ..cells]);
+            }
+
+            if (selectedPatch != null)
+            {
+                AnsiConsole.MarkupLine($"[#FFD787 bold]{selectedPatch.Name}[/]");
+                AnsiConsole.MarkupLine($"[#FFD787]\n{selectedPatch.Description}[/]");
             }
 
             AnsiConsole.Write(patchMatrix);
@@ -203,8 +174,51 @@ public partial class PatchesCLI
                     if (position.Row > 0)
                         position.MoveUp();
                     break;
+                
+                case ConsoleKey.Spacebar:
+                    var newConnection = await AddPatchMatrixConnectionAsync(
+                        input: columnConnectionPoints[position.Col],
+                        output: rowConnectionPoints[position.Row],
+                        patchId: selectedPatch?.Id);
+                    connections = [.. connections, newConnection];
+                    break;
+
             }
                 
         } while (command.Key != ConsoleKey.Escape);
+
+        CurrentCommand = null;
+    }
+
+    private async Task<ConnectionDto> AddPatchMatrixConnectionAsync(
+        PatchMatrixConnectionPointDto input,
+        PatchMatrixConnectionPointDto output,
+        int? patchId = null,
+        CancellationToken ct = default)
+    {
+        var inputConnectionPointDto = new ConnectionPointDto
+        {
+            Id = input.Id,
+            Name = input.Name,
+            ModuleId = input.ModuleId,
+            Type = input.Type.Name
+        };
+
+        var outputConnectionPointDto = new ConnectionPointDto
+        {
+            Id = output.Id,
+            Name = output.Name,
+            ModuleId = output.ModuleId,
+            Type = output.Type.Name
+        };
+
+        var command = new AddConnectionCommand(
+            input: inputConnectionPointDto,
+            output: outputConnectionPointDto,
+            patchId ?? -1
+        );
+
+        var result = await AddConnectionHandler.HandleAsync(command, ct);
+        return result.Connection;
     }
 }
