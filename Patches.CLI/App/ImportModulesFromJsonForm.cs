@@ -1,19 +1,21 @@
+using Patches.Application.Contracts;
+using Patches.CLI.App.Contracts;
 using Patches.Shared.Commands;
 using Spectre.Console;
 
-namespace Patches.CLI;
+namespace Patches.CLI.App;
 
-public partial class PatchesCLI
+public class ImportModulesFromJsonForm(IConsoleUIService ui, IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler) : IScreen
 {
-    private async Task ImportModulesFromJsonForm()
+    public async Task<string?> RunAsync()
     {
-        UI.ClearBuffer();
-        UI.Clear();
-        UI.WriteLine("Import Modules from Modulargrid JSON");
-        UI.WriteLine(new string('-', 36));
-        UI.WriteLine("Visit your rack URL with .json appended in a browser,");
-        UI.WriteLine("copy the JSON, paste it below, then press Enter twice.");
-        UI.WriteLine();
+        ui.ClearBuffer();
+        ui.Clear();
+        ui.WriteLine("Import Modules from Modulargrid JSON");
+        ui.WriteLine(new string('-', 36));
+        ui.WriteLine("Visit your rack URL with .json appended in a browser,");
+        ui.WriteLine("copy the JSON, paste it below, then press Enter twice.");
+        ui.WriteLine();
 
         var lines = new List<string>();
         string? line;
@@ -26,41 +28,39 @@ public partial class PatchesCLI
 
         if (string.IsNullOrWhiteSpace(json))
         {
-            UI.WriteLine("[red]No JSON provided. Import cancelled.[/]");
-            UI.TextMiddle();
-            UI.WriteLine("Press any key to continue");
-            UI.TextBottom();
-            UI.ReadKey();
-            CurrentCommand = null;
-            return;
+            ui.WriteLine("[red]No JSON provided. Import cancelled.[/]");
+            ui.TextMiddle();
+            ui.WriteLine("Press any key to continue");
+            ui.TextBottom();
+            ui.ReadKey();
+            return null;
         }
 
-        UI.Clear();
-        UI.WriteLine("Importing modules...", omitFromBuffer: true);
+        ui.Clear();
+        ui.WriteLine("Importing modules...", omitFromBuffer: true);
 
         ImportModulesFromJsonResult result;
         try
         {
-            result = await ImportFromJsonHandler.HandleAsync(new ImportModulesFromJsonCommand { Json = json });
+            result = await importFromJsonHandler.HandleAsync(new ImportModulesFromJsonCommand { Json = json });
         }
         catch (Exception ex)
         {
-            UI.Clear();
-            UI.WriteLine($"[red]Import failed: {Markup.Escape(ex.Message)}[/]");
-            UI.TextMiddle();
-            UI.WriteLine("Press any key to continue");
-            UI.TextBottom();
-            UI.ReadKey();
-            CurrentCommand = null;
-            return;
+            ui.Clear();
+            ui.WriteLine($"[red]Import failed: {Markup.Escape(ex.Message)}[/]");
+            ui.TextMiddle();
+            ui.WriteLine("Press any key to continue");
+            ui.TextBottom();
+            ui.ReadKey();
+            return null;
         }
 
-        UI.Clear();
-        UI.WriteLine($"Imported: {result.ImportedCount} | Skipped: {result.SkippedCount}");
-        UI.TextMiddle();
-        UI.WriteLine("Press any key to continue");
-        UI.TextBottom();
-        UI.ReadKey();
-        CurrentCommand = null;
+        ui.Clear();
+        ui.WriteLine($"Imported: {result.ImportedCount} | Skipped: {result.SkippedCount}");
+        ui.TextMiddle();
+        ui.WriteLine("Press any key to continue");
+        ui.TextBottom();
+        ui.ReadKey();
+        return null;
     }
 }
