@@ -4,6 +4,7 @@ using Patches.Application.Contracts;
 using Patches.Domain.Entities;
 using Patches.Domain.ValueObjects;
 using Patches.Shared.Commands;
+using Patches.Shared.Dtos;
 
 namespace Patches.Application.Handlers;
 
@@ -48,6 +49,9 @@ public class AddConnectionHandler(
 
         await unitOfWork.SaveChangesAsync();
 
-        return new AddConnectionResult();
+        return new AddConnectionResult
+        {
+            Connection = mapper.Map<ConnectionDto>(connection)
+        };
     }
 }

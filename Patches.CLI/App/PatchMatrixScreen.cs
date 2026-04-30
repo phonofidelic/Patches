@@ -21,47 +21,56 @@ public partial class PatchesCLI
 {
     public async Task RenderPatchMatrixScreenAsync(PatchListItemDto? selectedPatch = null)
     {
-        var result = await GetModulesForPatchMatrixHandler.HandleAsync(new LoadPatchMatrixQuery());
-        var modules = result.Modules;
         ConsoleKeyInfo command;
         var position = new TablePosition();
-
-        IReadOnlyList<PatchMatrixConnectionPointDto> columnConnectionPoints = result.Inputs;
-        IReadOnlyList<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
-
-        IReadOnlyList<PatchMatrixConnectionPointDto> rowConnectionPoints = result.Outputs;
-        IReadOnlyList<string> rowConnectionPointNames = [.. rowConnectionPoints.Select(i => i.Name)];
-
-        string moduleHeaderName = "MODULE";
-        string signalTypeHeader = "SIGNAL";
-        string connectionTypeHeader = "CONN.";
-
-        int maxColumnConnectionPointNameLength = columnConnectionPointNames
-            .Select(c => c.Split(" ").First())
-            .Max(n => n.Length);
-        
-        int maxModuleNameHeaderLength = modules
-            .Select(m => m.Name)
-            .Append(moduleHeaderName)
-            .Max(s => s.Length);
-
-        int maxRowSignalTypeHeaderNameLength = rowConnectionPointNames
-            .Select(s => s.Split(" ").First())
-            .Append(signalTypeHeader)
-            .Max(s => s.Length);
-
-        int maxRowConnectionTypeHeaderNameLength = rowConnectionPoints
-            .Select(c => c.Name)
-            .Append(connectionTypeHeader)
-            .Max(s => s.Length);
-        
-        int columnCount = columnConnectionPoints.Count;
-        
-        int rowCount = rowConnectionPoints.Count;
-
         // Render loop
         do
         {
+
+            var result = await GetModulesForPatchMatrixHandler.HandleAsync(new LoadPatchMatrixQuery()
+            {
+                PatchId = selectedPatch?.Id
+            });
+
+            var modules = result.Modules;
+            IReadOnlyList<ConnectionDto> connections = [.. result.Connections];
+            List<int> connectedInputIds = [.. connections.Select(i => i.InputId)];
+            List<int> connectedOutputIds = [.. connections.Select(i => i.OutputId)];
+
+            IReadOnlyList<PatchMatrixConnectionPointDto> columnConnectionPoints = result.Inputs;
+            IReadOnlyList<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
+
+            IReadOnlyList<PatchMatrixConnectionPointDto> rowConnectionPoints = result.Outputs;
+            IReadOnlyList<string> rowConnectionPointNames = [.. rowConnectionPoints.Select(i => i.Name)];
+
+            string moduleHeaderName = "MODULE";
+            string signalTypeHeader = "SIGNAL";
+            string connectionTypeHeader = "CONN.";
+
+            int maxColumnConnectionPointNameLength = columnConnectionPointNames
+                .Select(c => c.Split(" ").First())
+                .Max(n => n.Length);
+            
+            int maxModuleNameHeaderLength = modules
+                .Select(m => m.Name)
+                .Append(moduleHeaderName)
+                .Max(s => s.Length);
+
+            int maxRowSignalTypeHeaderNameLength = rowConnectionPointNames
+                .Select(s => s.Split(" ").First())
+                .Append(signalTypeHeader)
+                .Max(s => s.Length);
+
+            int maxRowConnectionTypeHeaderNameLength = rowConnectionPoints
+                .Select(c => c.Name)
+                .Append(connectionTypeHeader)
+                .Max(s => s.Length);
+            
+            int columnCount = columnConnectionPoints.Count;
+            
+            int rowCount = rowConnectionPoints.Count;
+
+        
             UI.Clear();
 
             var patchMatrix = new Table()
@@ -109,12 +118,19 @@ public partial class PatchesCLI
                     .PadRight(maxRowSignalTypeHeaderNameLength);
                 string header = $"[{style}]{item.output.ModuleName.PadRight(maxModuleNameHeaderLength, '_')}|{signalType}|{connectionType}[/]";
                 List<string> cells = [];
-                
+
                 for (int i = 0; i < columnCount; i++)
                 {
-                    var outputId = rowConnectionPoints[position.Row].Id;
-                    var inputId = columnConnectionPoints[position.Col].Id;
-                    string cellContent = " ";
+                    var output = item.output;
+                    var input = columnConnectionPoints[i];
+
+                    bool hasPatch = connections.FirstOrDefault(c => 
+                        c.OutputId == output.Id && 
+                        c.InputId == input.Id && 
+                        c.PatchId == selectedPatch?.Id) != null;
+
+                    string cellContent = hasPatch ? "•" : " ";
+
                     var cell = position.Row == item.index && position.Col == i 
                         ? $"[#000 on #FFD787][[{cellContent}]][/]"
                         : $"[#FFD787][[{cellContent}]][/]";
@@ -160,10 +176,11 @@ public partial class PatchesCLI
                     break;
                 
                 case ConsoleKey.Spacebar:
-                    await AddPatchMatrixConnectionAsync(
+                    var newConnection = await AddPatchMatrixConnectionAsync(
                         input: columnConnectionPoints[position.Col],
                         output: rowConnectionPoints[position.Row],
                         patchId: selectedPatch?.Id);
+                    connections = [.. connections, newConnection];
                     break;
 
             }
@@ -173,7 +190,7 @@ public partial class PatchesCLI
         CurrentCommand = null;
     }
 
-    private async Task AddPatchMatrixConnectionAsync(
+    private async Task<ConnectionDto> AddPatchMatrixConnectionAsync(
         PatchMatrixConnectionPointDto input,
         PatchMatrixConnectionPointDto output,
         int? patchId = null,
@@ -201,6 +218,7 @@ public partial class PatchesCLI
             patchId ?? -1
         );
 
-        await AddConnectionHandler.HandleAsync(command, ct);
+        var result = await AddConnectionHandler.HandleAsync(command, ct);
+        return result.Connection;
     }
 }

@@ -1,3 +1,5 @@
+using Patches.Shared.Dtos;
+
 namespace Patches.Shared.Queries;
 
 public class LoadPatchMatrixQuery
@@ -17,9 +19,9 @@ public class LoadPatchMatrixQuery
 public class LoadPatchMatrixResult
 {
     public IReadOnlyList<PatchMatrixItemDto> Modules { get; set; } = [];
-    public IReadOnlyList<PatchMatrixConnectionPointDto> ConnectionPoints { get; set; } = [];
     public IReadOnlyList<PatchMatrixConnectionPointDto> Inputs { get; set; } = [];
     public IReadOnlyList<PatchMatrixConnectionPointDto> Outputs { get; set; } = [];
+    public IReadOnlyList<ConnectionDto> Connections { get; set; } = [];
 }
 
 public class PatchMatrixItemDto

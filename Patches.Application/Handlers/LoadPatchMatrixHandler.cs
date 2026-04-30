@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Data;
 using AutoMapper;
 using Patches.Application.Contracts;
+using Patches.Shared.Dtos;
 using Patches.Shared.Queries;
 
 namespace Patches.Application.Handlers;
@@ -12,7 +14,7 @@ public class LoadPatchMatrixHandler(
     private readonly IMapper mapper = mapper;
     private readonly IUnitOfWork unitOfWork = unitOfWork;
     public async Task<LoadPatchMatrixResult> HandleAsync(
-        LoadPatchMatrixQuery request, 
+        LoadPatchMatrixQuery query, 
         CancellationToken ct = default)
     {
         var modules = unitOfWork.Modules.GetAll();
@@ -22,24 +24,20 @@ public class LoadPatchMatrixHandler(
         var connectionPoints = unitOfWork.ConnectionPoints
             .FindByCondition(c => modules.Contains(c.Module))
             .AsEnumerable();
+
+        var connections = unitOfWork.Connections
+            .FindByCondition(c => c.PatchId == query.PatchId)
+            .ToImmutableList();
         
         var inputs = connectionPoints.Where(c => c.Type.Name == "Input");
         var outputs = connectionPoints.Where(c => c.Type.Name == "Output");
         
-        var connectionPointsDto = connectionPoints
-            .Select(c => 
-            {
-                var dto = mapper.Map<PatchMatrixConnectionPointDto>(c);
-                dto.Type = mapper.Map<PatchMatrixConnectionPointType>(c.Type);
-                return dto;
-            });
-        
         return new LoadPatchMatrixResult
         {
             Modules = [.. modules.Select(mapper.Map<PatchMatrixItemDto>)],
-            ConnectionPoints = [.. connectionPointsDto],
             Inputs = [.. inputs.Select(mapper.Map<PatchMatrixConnectionPointDto>)],
-            Outputs = [.. outputs.Select(mapper.Map<PatchMatrixConnectionPointDto>)]
+            Outputs = [.. outputs.Select(mapper.Map<PatchMatrixConnectionPointDto>)],
+            Connections = [.. connections.Select(mapper.Map<ConnectionDto>)]
         };
     }
 }

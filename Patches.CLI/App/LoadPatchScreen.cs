@@ -1,4 +1,5 @@
 using Patches.Shared.Dtos;
+using Patches.Shared.Queries;
 using Spectre.Console;
 
 namespace Patches.CLI;
@@ -9,7 +10,7 @@ public partial class PatchesCLI
     private async Task RenderLoadPatchScreenAsync()
     {
         PatchListItemDto? selectedPatch;
-        var result = await ListPatchesHandler.HandleAsync(new());
+        var result = await ListPatchesHandler.HandleAsync(new ListPatchesQuery());
 
         if (result.Patches.Count < 1)
         {

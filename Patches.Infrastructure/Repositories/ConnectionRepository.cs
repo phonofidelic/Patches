@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Patches.Application.Contracts;
 using Patches.Domain.Entities;
 using Patches.Infrastructure.Data;
@@ -17,7 +18,12 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
         Expression<Func<Connection, bool>> condition, 
         bool trackChanges = false)
     {
-        throw new NotImplementedException();
+        return (!trackChanges 
+            ? context.Connections.AsNoTracking()
+            : context.Connections)
+                .Include(c => c.Input)
+                .Include(c => c.Output)
+                .Where(condition);
     }
 
     public async Task<Connection?> FindByIdAsync(

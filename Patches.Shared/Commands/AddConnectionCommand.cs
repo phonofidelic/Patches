@@ -14,5 +14,5 @@ public class AddConnectionCommand(
 
 public class AddConnectionResult
 {
-    
+    public ConnectionDto Connection { get; set; } = default!; 
 }
