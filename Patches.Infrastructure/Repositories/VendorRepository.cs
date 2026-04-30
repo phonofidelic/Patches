@@ -15,6 +15,11 @@ public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor
         context.Vendors.Add(entity);
     }
 
+    public void Remove(Vendor entity)
+    {
+        context.Vendors.Remove(entity);
+    }
+
     public IQueryable<Vendor> FindByCondition(Expression<Func<Vendor, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();

@@ -15,6 +15,11 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
         context.ConnectionPoints.Add(entity);
     }
 
+    public void Remove(ConnectionPoint entity)
+    {
+        context.ConnectionPoints.Remove(entity);
+    }
+
     public IQueryable<ConnectionPoint> FindByCondition(
         Expression<Func<ConnectionPoint, bool>> condition, 
         bool trackChanges = false)

@@ -15,6 +15,11 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
         context.Patches.Add(entity);
     }
 
+    public void Remove(Patch entity)
+    {
+        context.Patches.Remove(entity);
+    }
+
     public IQueryable<Patch> FindByCondition(Expression<Func<Patch, bool>> condition, bool trackChanges = false)
     {
         throw new NotImplementedException();

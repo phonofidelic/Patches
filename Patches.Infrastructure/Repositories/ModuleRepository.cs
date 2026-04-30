@@ -14,6 +14,11 @@ public class ModuleRepository(ApplicationDbContext context) : IRepository<Module
         context.Modules.Add(entity);
     }
 
+    public void Remove(Module entity)
+    {
+        context.Modules.Remove(entity);
+    }
+
     public IQueryable<Module> FindByCondition(
         Expression<Func<Module, bool>> condition, 
         bool trackChanges = false)

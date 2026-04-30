@@ -14,6 +14,11 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
         context.Connections.Add(entity);
     }
 
+    public void Remove(Connection entity)
+    {
+        context.Connections.Remove(entity);
+    }
+
     public IQueryable<Connection> FindByCondition(
         Expression<Func<Connection, bool>> condition, 
         bool trackChanges = false)
@@ -31,7 +36,8 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
         bool trackChanges = false,
         CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return await FindByCondition(c => c.InputId == id, trackChanges)
+            .FirstOrDefaultAsync(ct);
     }
 
     public IEnumerable<Connection> GetAll()
