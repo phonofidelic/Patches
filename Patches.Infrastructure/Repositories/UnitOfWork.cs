@@ -8,19 +8,19 @@ public class UnitOfWork(
     IRepository<Module, Guid> moduleRepository,
     IRepository<Vendor, Guid> vendorRepository,
     IRepository<ConnectionPoint, int> connectionPointRepository,
-    IRepository<Connection, int> connectionRepository,
+    IConnectionRepository connectionRepository,
     IRepository<Patch, int> patchRepository,
     ApplicationDbContext context) : IUnitOfWork
 {
     private readonly ApplicationDbContext context = context;
-    
+
     public IRepository<Module, Guid> Modules { get; } = moduleRepository;
 
     public IRepository<Vendor, Guid> Vendors { get; } = vendorRepository;
 
     public IRepository<ConnectionPoint, int> ConnectionPoints { get; } = connectionPointRepository;
 
-    public IRepository<Connection, int> Connections { get; } = connectionRepository;
+    public IConnectionRepository Connections { get; } = connectionRepository;
 
     public IRepository<Patch, int> Patches { get; } = patchRepository;
 

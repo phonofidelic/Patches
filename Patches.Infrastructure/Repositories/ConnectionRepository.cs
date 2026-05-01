@@ -6,7 +6,7 @@ using Patches.Infrastructure.Data;
 
 namespace Patches.Infrastructure.Repositories;
 
-public class ConnectionRepository(ApplicationDbContext context) : IRepository<Connection, int>
+public class ConnectionRepository(ApplicationDbContext context) : IConnectionRepository
 {
     private readonly ApplicationDbContext context = context;
     public void Add(Connection entity)
@@ -20,10 +20,10 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
     }
 
     public IQueryable<Connection> FindByCondition(
-        Expression<Func<Connection, bool>> condition, 
+        Expression<Func<Connection, bool>> condition,
         bool trackChanges = false)
     {
-        return (!trackChanges 
+        return (!trackChanges
             ? context.Connections.AsNoTracking()
             : context.Connections)
                 .Include(c => c.Input)
@@ -31,17 +31,12 @@ public class ConnectionRepository(ApplicationDbContext context) : IRepository<Co
                 .Where(condition);
     }
 
-    public async Task<Connection?> FindByIdAsync(
-        int id,
+    public async Task<Connection?> FindByInputIdAsync(
+        int inputId,
         bool trackChanges = false,
         CancellationToken ct = default)
     {
-        return await FindByCondition(c => c.InputId == id, trackChanges)
+        return await FindByCondition(c => c.InputId == inputId, trackChanges)
             .FirstOrDefaultAsync(ct);
-    }
-
-    public IEnumerable<Connection> GetAll()
-    {
-        throw new NotImplementedException();
     }
 }

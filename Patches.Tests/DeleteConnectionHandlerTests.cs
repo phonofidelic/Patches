@@ -10,7 +10,7 @@ namespace Patches.Tests;
 public class DeleteConnectionHandlerTests
 {
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
-    private readonly IRepository<Connection, int> _connections = Substitute.For<IRepository<Connection, int>>();
+    private readonly IConnectionRepository _connections = Substitute.For<IConnectionRepository>();
 
     public DeleteConnectionHandlerTests()
     {
