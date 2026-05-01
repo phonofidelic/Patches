@@ -149,6 +149,7 @@ public class PatchMatrixScreen(
                 new Markup("Use the [#FFD787 bold]arrow keys[/] to move the cursor across the patch matrix."),
                 new Markup("Use the [#FFD787 bold]Space bar[/] to patch/un-patch a connection."),
                 new Markup("Use [#FFD787 bold]Enter[/] to start typing a text command."),
+                new Markup("Use [#FFD787 bold]/[/] to search for an input or output."),
                 new Text(""),
                 new Markup("Press [#FFD787 bold]Escape[/] return to the home screen."),
                 new Text(""),
@@ -200,6 +201,30 @@ public class PatchMatrixScreen(
                             .AllowEmpty())
                         ?.Trim();
                     break;
+
+                default:
+                    if (keyCommand.KeyChar == '/')
+                    {
+                        var searchItems = columnConnectionPoints
+                            .Select((cp, i) => new SearchResult($"[INPUT]  {cp.ModuleName}: {cp.Name}", i, true))
+                            .Concat(rowConnectionPoints
+                                .Select((cp, i) => new SearchResult($"[OUTPUT] {cp.ModuleName}: {cp.Name}", i, false)))
+                            .ToList();
+
+                        var searchPrompt = new SelectionPrompt<SearchResult>()
+                            .Title("[#FFD787]Search:[/]")
+                            .EnableSearch()
+                            .HighlightStyle(new Style(Color.LightGoldenrod2_2, Console.BackgroundColor, Decoration.Bold))
+                            .UseConverter(r => r.Label)
+                            .AddChoices(searchItems);
+
+                        var selected = ansiConsole.Prompt(searchPrompt);
+                        if (selected.IsInput)
+                            position.MoveToCol(selected.Index);
+                        else
+                            position.MoveToRow(selected.Index);
+                    }
+                    break;
             }
 
             if (!string.IsNullOrEmpty(textCommand))
@@ -217,6 +242,8 @@ public class PatchMatrixScreen(
         return null;   
     }
 
+    private record SearchResult(string Label, int Index, bool IsInput);
+
     private class TablePosition
     {
         public int Row { get; private set; }
@@ -226,6 +253,8 @@ public class PatchMatrixScreen(
         public void MoveLeft() => Col--;
         public void MoveDown() => Row++;
         public void MoveUp() => Row--;
+        public void MoveToRow(int row) => Row = row;
+        public void MoveToCol(int col) => Col = col;
     }
 
     private async Task<ConnectionDto[]> ToggleConnectionAsync(
