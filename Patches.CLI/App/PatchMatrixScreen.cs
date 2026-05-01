@@ -206,9 +206,9 @@ public class PatchMatrixScreen(
                     if (keyCommand.KeyChar == '/')
                     {
                         var searchItems = columnConnectionPoints
-                            .Select((cp, i) => new SearchResult($"[INPUT]  {cp.ModuleName}: {cp.Name}", i, true))
+                            .Select((cp, i) => new SearchResult($"[[INPUT]]  {cp.ModuleName}: {cp.Name}", i, true))
                             .Concat(rowConnectionPoints
-                                .Select((cp, i) => new SearchResult($"[OUTPUT] {cp.ModuleName}: {cp.Name}", i, false)))
+                                .Select((cp, i) => new SearchResult($"[[OUTPUT]] {cp.ModuleName}: {cp.Name}", i, false)))
                             .ToList();
 
                         var searchPrompt = new SelectionPrompt<SearchResult>()
