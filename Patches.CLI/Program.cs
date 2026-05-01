@@ -31,7 +31,7 @@ services.AddLogging();
 services.AddScoped<IRepository<Module, Guid>, ModuleRepository>();
 services.AddScoped<IRepository<Vendor, Guid>, VendorRepository>();
 services.AddScoped<IRepository<ConnectionPoint, int>, ConnectionPointRepository>();
-services.AddScoped<IRepository<Connection, int>, ConnectionRepository>();
+services.AddScoped<IConnectionRepository, ConnectionRepository>();
 services.AddScoped<IRepository<Patch, int>, PatchRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
