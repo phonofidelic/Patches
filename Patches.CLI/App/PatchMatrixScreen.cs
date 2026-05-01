@@ -14,11 +14,13 @@ public class PatchMatrixScreen(
     IHandler<AddConnectionCommand, AddConnectionResult> addConnectionHandler,
     IHandler<DeleteConnectionCommand, DeleteConnectionResult> deleteConnectionHandler) : IScreen
 {
+    private string? ErrorMessage { get; set;}
     public Task<string?> RunAsync() => RunAsync(null);
 
     public async Task<string?> RunAsync(PatchListItemDto? selectedPatch)
     {
-        ConsoleKeyInfo command;
+        ConsoleKeyInfo keyCommand;
+        string? textCommand = null;
         var position = new TablePosition();
         do
         {
@@ -142,11 +144,28 @@ public class PatchMatrixScreen(
             ansiConsole.Write(patchMatrix);
 
             ansiConsole.WriteLine("");
-            ansiConsole.WriteLine("Press Escape to exit");
+            var contextHelpRows = new Rows(
+                new Text(""),
+                new Markup("Use the [#FFD787 bold]arrow keys[/] to move the cursor across the patch matrix."),
+                new Markup("Use the [#FFD787 bold]Space bar[/] to patch/un-patch a connection."),
+                new Markup("Use [#FFD787 bold]Enter[/] to start typing a text command."),
+                new Text(""),
+                new Markup("Press [#FFD787 bold]Escape[/] return to the home screen."),
+                new Text(""),
+                new Markup(ErrorMessage ?? "")
+            );
+            
+            ansiConsole.Write(contextHelpRows);
 
-            command = ui.ReadKey(intercept: true);
-            switch (command.Key)
+            ansiConsole.Cursor.SetPosition(0, Console.WindowHeight);
+            keyCommand = ui.ReadKey(intercept: true);
+            ErrorMessage = null;
+
+            switch (keyCommand.Key)
             {
+                case ConsoleKey.Escape:
+                    break;
+
                 case ConsoleKey.RightArrow:
                     if (position.Col < columnConnectionPoints.Count - 1)
                         position.MoveRight();
@@ -174,11 +193,28 @@ public class PatchMatrixScreen(
                         output: rowConnectionPoints[position.Row],
                         patchId: selectedPatch?.Id);
                     break;
+
+                case ConsoleKey.Enter:
+                    textCommand = ansiConsole.Prompt(
+                        new TextPrompt<string?>($"[#FFD787]>[/]")
+                            .AllowEmpty())
+                        ?.Trim();
+                    break;
             }
 
-        } while (command.Key != ConsoleKey.Escape);
+            if (!string.IsNullOrEmpty(textCommand))
+                textCommand = textCommand switch
+                {
+                    _ => HandleUnknownCommand(textCommand)
+                };
+        } while (keyCommand.Key != ConsoleKey.Escape);
 
         return null;
+    }
+
+    private string? HandleUnknownCommand(string? command) {
+        ErrorMessage = $"[#FF5F5F]Unknown command: '{Markup.Escape(command ?? "")}'[/]";
+        return null;   
     }
 
     private class TablePosition
