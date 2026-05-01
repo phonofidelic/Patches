@@ -72,6 +72,7 @@ public class PatchMatrixScreen(
                 .NoBorder()
                 .AddColumn("");
 
+            // Add column headers for module input labels
             foreach (var item in columnConnectionPoints.Select((input, index) => (input, index)))
             {
                 string signalName = item.input.Name.ToUpper()
@@ -94,6 +95,7 @@ public class PatchMatrixScreen(
             patchMatrix.AddRow($"[#FFF]{moduleHeaderName.PadRight(maxModuleNameHeaderLength, '_')}|{signalTypeHeader.PadLeft(maxRowSignalTypeHeaderNameLength / 2).PadRight(maxRowSignalTypeHeaderNameLength)}|{connectionTypeHeader.PadLeft(maxRowConnectionTypeHeaderNameLength / 2).PadRight(maxRowSignalTypeHeaderNameLength)}[/]");
             patchMatrix.AddEmptyRow();
 
+            // Add row headers for module output labels and column cell content
             foreach (var item in rowConnectionPoints.Select((output, index) => (output, index)))
             {
                 string style = item.index == position.Row ? "#000 on #FFF" : "#FFF";
@@ -281,13 +283,17 @@ public class PatchMatrixScreen(
 
         var inputDto = new ConnectionPointDto
         {
-            Id = input.Id, Name = input.Name,
-            ModuleId = input.ModuleId, Type = input.Type.Name
+            Id = input.Id, 
+            Name = input.Name,
+            ModuleId = input.ModuleId, 
+            Type = input.Type.Name
         };
         var outputDto = new ConnectionPointDto
         {
-            Id = output.Id, Name = output.Name,
-            ModuleId = output.ModuleId, Type = output.Type.Name
+            Id = output.Id, 
+            Name = output.Name,
+            ModuleId = output.ModuleId, 
+            Type = output.Type.Name
         };
         var result = await addConnectionHandler.HandleAsync(
             new AddConnectionCommand(inputDto, outputDto, patchId ?? -1), ct);
