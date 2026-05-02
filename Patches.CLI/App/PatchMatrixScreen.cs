@@ -218,9 +218,15 @@ public class PatchMatrixScreen(
                             .EnableSearch()
                             .HighlightStyle(new Style(Color.LightGoldenrod2_2, Console.BackgroundColor, Decoration.Bold))
                             .UseConverter(r => r.Label)
-                            .AddChoices(searchItems);
+                            .AddChoices(searchItems)
+                            .AddCancelResult(new SearchResult("", -1, false));
 
                         var selected = ansiConsole.Prompt(searchPrompt);
+
+                        // Break if search is canceled
+                        if (selected.Index == -1)
+                            break;
+
                         if (selected.IsInput)
                             position.MoveToCol(selected.Index);
                         else
