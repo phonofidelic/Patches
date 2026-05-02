@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Patches.Shared.Commands;
-using Xunit;
 
 namespace Patches.Tests;
 
