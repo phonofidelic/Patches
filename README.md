@@ -1,5 +1,7 @@
 # Patches
 
+[![PR Tests](https://github.com/phonofidelic/Patches/actions/workflows/pr-tests.yml/badge.svg)](https://github.com/phonofidelic/Patches/actions/workflows/pr-tests.yml)
+
 A .NET 10 terminal UI application for managing Eurorack modular synthesizer patch connections. Built with [Spectre.Console](https://spectreconsole.net/) for the interactive console UI and SQLite (via EF Core) for local state persistence.
 
 ## Architecture
