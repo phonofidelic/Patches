@@ -59,7 +59,7 @@ public class PatchesCLI(
             ansiConsole.Write(rootLayout);
 
             top.Update(new Rows(
-                Console.WindowHeight > 38 ? banner : new Markup("[bold #FFD787]Patches[/]"),
+                banner,
                 helpTable));
 
             bottom.Update(new Rows());
