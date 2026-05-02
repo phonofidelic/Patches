@@ -13,13 +13,11 @@ using Patches.Shared.Queries;
 using Patches.Infrastructure.ModulargridApi;
 using Spectre.Console;
 using Patches.CLI.App;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var services = new ServiceCollection();
 
 var dbPath = DbPathHelper.GetDbPath(args);
 Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
-Console.WriteLine($"Database: {dbPath}");
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -78,4 +76,4 @@ using (var scope = serviceProvider.CreateScope())
 
 var patches = serviceProvider.GetRequiredService<PatchesCLI>();
 
-await patches.InitAsync();
+await patches.InitAsync(dbPath);

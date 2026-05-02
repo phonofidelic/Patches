@@ -18,10 +18,11 @@ public class PatchesCLI(
 {
     private InitializePatchMatrixResult? _state;
     private static readonly IReadOnlyList<string> QuitCommands = ["q", "quit"];
-
-    public async Task InitAsync()
+    private static string DbPath { get; set; } = "";
+    public async Task InitAsync(string dbPath)
     {
         _state = await initHandler.HandleAsync(new());
+        DbPath = dbPath;
         await RunAsync();
     }
 
@@ -30,26 +31,33 @@ public class PatchesCLI(
         if (_state is null) throw new Exception("State not initialized");
 
         var banner = new Banner("Patches", "v0.1");
+
+        var dbInfo = new Panel(new TextPath(DbPath)
+                .RootColor(Color.Gray)
+                .SeparatorColor(Color.Gray)
+                .StemColor(Color.Gray)
+                .LeafStyle(new Style().Decoration(Decoration.Bold)))
+            .Header("Db path:")
+            .RoundedBorder();
+
         var helpTable = new HelpTable();
 
-        var rootLayout = new Layout("Root")
-            .SplitRows(
-                new Layout("Top").Size(banner.Height + helpTable.Height + 6),
-                new Layout("Bottom"));
+        var rootLayout = new Layout("Root");
 
-        var top = rootLayout["Top"];
-        var bottom = rootLayout["Bottom"];
-
-        top.Update(new Rows(banner, helpTable));
-        bottom.Update(new Rows());
+        rootLayout.Update(new Rows(
+            banner,
+            dbInfo,
+            helpTable));
 
         string? currentCommand = null;
 
         string? HandleUnknown(string? cmd)
         {
-            bottom.Update(Align.Left(
-                new Rows(new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(cmd ?? "")}'[/]")),
-                VerticalAlignment.Middle));
+            rootLayout.Update(new Rows(
+                banner,
+                dbInfo,
+                helpTable,
+                new Markup($"[#FF5F5F]Unknown command: '{Markup.Escape(cmd ?? "")}'[/]")));
             return null;
         }
 
@@ -58,11 +66,10 @@ public class PatchesCLI(
             ui.Clear();
             ansiConsole.Write(rootLayout);
 
-            top.Update(new Rows(
+            rootLayout.Update(new Rows(
                 banner,
+                dbInfo,
                 helpTable));
-
-            bottom.Update(new Rows());
 
             ansiConsole.Cursor.SetPosition(0, Console.WindowHeight);
             currentCommand ??= ansiConsole.Prompt(new TextPrompt<string?>("[#FFD787]>[/]").DefaultValue(null).ShowDefaultValue(false));
