@@ -15,17 +15,17 @@ public class ImportModulesFromJsonHandler(
         var dtos = apiClient.ParseModulesFromJson(command.Json);
 
         var existingModules = unitOfWork.Modules.GetAll()
-            .Select(m => (m.Name, m.Vendor?.Name))
+            .Select(m => (m.Name.ToLowerInvariant(), m.Vendor?.Name?.ToLowerInvariant()))
             .ToHashSet();
 
         var vendorsByName = unitOfWork.Vendors.GetAll()
-            .ToDictionary(v => v.Name, v => v);
+            .ToDictionary(v => v.Name, v => v, StringComparer.OrdinalIgnoreCase);
 
         int imported = 0, skipped = 0;
 
         foreach (var dto in dtos)
         {
-            if (existingModules.Contains((dto.Name, dto.VendorName)))
+            if (existingModules.Contains((dto.Name.ToLowerInvariant(), dto.VendorName?.ToLowerInvariant())))
             {
                 skipped++;
                 continue;
