@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Patches.CLI/Patches.CLI.csproj" />
     <ProjectReference Include="../Patches.Application/Patches.Application.csproj" />
     <ProjectReference Include="../Patches.Infrastructure/Patches.Infrastructure.csproj" />
     <ProjectReference Include="../Patches.Shared/Patches.Shared.csproj" />
