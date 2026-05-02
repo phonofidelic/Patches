@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging.Abstractions;
 using Patches.Infrastructure.Data;
-using Xunit;
 
 namespace Patches.Tests;
 

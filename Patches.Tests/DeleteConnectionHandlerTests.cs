@@ -3,7 +3,6 @@ using Patches.Application.Contracts;
 using Patches.Application.Handlers;
 using Patches.Domain.Entities;
 using Patches.Shared.Commands;
-using Xunit;
 
 namespace Patches.Tests;
 
