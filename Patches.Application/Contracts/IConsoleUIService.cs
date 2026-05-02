@@ -9,6 +9,7 @@ public interface IConsoleUIService
     void WriteCurrentBuffer();
     void ClearBuffer();
     void WriteError(string message);
+    string? ReadLine();
     ConsoleKeyInfo ReadKey(bool intercept = false);
     void Clear();
     void DisplayHelp();

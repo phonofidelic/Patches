@@ -21,7 +21,7 @@ public class ImportModulesFromJsonForm(
 
         var lines = new List<string>();
         string? line;
-        while (!string.IsNullOrEmpty(line = Console.ReadLine()))
+        while (!string.IsNullOrEmpty(line = ui.ReadLine()))
         {
             lines.Add(line);
         }
