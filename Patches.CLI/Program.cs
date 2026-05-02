@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Patches.Application.Contracts;
 using Patches.Services;
@@ -58,6 +59,10 @@ services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 services.AddScoped<IModulargridApiClient, ModulargridApiClient>();
 
 var serviceProvider = services.BuildServiceProvider();
+
+#if DEBUG
+serviceProvider.GetRequiredService<IMapper>().ConfigurationProvider.AssertConfigurationIsValid();
+#endif
 
 using (var scope = serviceProvider.CreateScope())
 {
