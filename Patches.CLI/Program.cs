@@ -32,7 +32,6 @@ services.AddScoped<IConnectionRepository, ConnectionRepository>();
 services.AddScoped<IRepository<Patch, int>, PatchRepository>();
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-services.AddScoped<IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult>, InitializePatchMatrixHandler>();
 services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
 services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
 services.AddScoped<IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult>, ImportModulesFromJsonHandler>();
