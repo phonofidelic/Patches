@@ -208,16 +208,17 @@ public class PatchMatrixScreen(
                     if (keyCommand.KeyChar == '/')
                     {
                         var searchItems = columnConnectionPoints
-                            .Select((cp, i) => new SearchResult($"[[INPUT]]  {cp.ModuleName}: {cp.Name}", i, true))
+                            .Select((cp, i) => new SearchResult($"{cp.ModuleName}: {cp.Name}", i, true))
                             .Concat(rowConnectionPoints
-                                .Select((cp, i) => new SearchResult($"[[OUTPUT]] {cp.ModuleName}: {cp.Name}", i, false)))
+                                .Select((cp, i) => new SearchResult($"{cp.ModuleName}: {cp.Name}", i, false)))
+                            .OrderBy(sr => sr.Label)
                             .ToList();
 
                         var searchPrompt = new SelectionPrompt<SearchResult>()
                             .Title("[#FFD787]Search:[/]")
                             .EnableSearch()
                             .HighlightStyle(new Style(Color.LightGoldenrod2_2, Console.BackgroundColor, Decoration.Bold))
-                            .UseConverter(r => r.Label)
+                            .UseConverter(r => $"{(r.IsInput ? "[[INPUT]] " : "[[OUTPUT]]")} {r.Label}")
                             .AddChoices(searchItems)
                             .AddCancelResult(new SearchResult("", -1, false));
 
