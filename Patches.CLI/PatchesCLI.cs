@@ -1,6 +1,5 @@
 using Patches.Application.Contracts;
 using Patches.CLI.App;
-using Patches.Shared.Commands;
 using Spectre.Console;
 
 namespace Patches.CLI;
@@ -8,7 +7,6 @@ namespace Patches.CLI;
 public class PatchesCLI(
     IConsoleUIService ui,
     IAnsiConsole ansiConsole,
-    IHandler<InitializePatchMatrixCommand, InitializePatchMatrixResult> initHandler,
     HelpScreen helpScreen,
     ModulesList modulesListScreen,
     AddModuleForm addModuleFormScreen,
@@ -16,20 +14,16 @@ public class PatchesCLI(
     PatchMatrixScreen patchMatrixScreen,
     LoadPatchScreen loadPatchScreen)
 {
-    private InitializePatchMatrixResult? _state;
     private static readonly IReadOnlyList<string> QuitCommands = ["q", "quit"];
     private static string DbPath { get; set; } = "";
     public async Task InitAsync(string dbPath)
     {
-        _state = await initHandler.HandleAsync(new());
         DbPath = dbPath;
         await RunAsync();
     }
 
     private async Task RunAsync()
     {
-        if (_state is null) throw new Exception("State not initialized");
-
         var banner = new Banner("Patches", "v0.1");
 
         var dbInfo = new Panel(new TextPath(DbPath)
