@@ -131,6 +131,8 @@ public class ConsoleUIService : IConsoleUIService
         }
     }
 
+    public string? ReadLine() => Console.ReadLine();
+
     public ConsoleKeyInfo ReadKey(bool intercept = false) => Console.ReadKey(intercept);
 
     public void Write(string message, bool omitFromBuffer = false) {
