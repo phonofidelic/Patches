@@ -17,11 +17,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var services = new ServiceCollection();
 
-var dbDir = Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-    "Patches");
-Directory.CreateDirectory(dbDir);
-var dbPath = Path.Combine(dbDir, "patches.db");
+var dbPath = DbPathHelper.GetDbPath(args);
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+Console.WriteLine($"Database: {dbPath}");
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
