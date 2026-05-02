@@ -69,7 +69,7 @@ public class ConsoleUIService : IConsoleUIService
 
         while (input == null)
         {
-            if (!int.TryParse(Console.ReadLine(), out int parsedInput))
+            if (!int.TryParse(ReadLine(), out int parsedInput))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 WriteLine(errorMessage);
@@ -89,7 +89,7 @@ public class ConsoleUIService : IConsoleUIService
         Clear();
         Write(Buffer.Previous);
         Write(prompt, omitFromBuffer: true);
-        string? input = Console.ReadLine();
+        string? input = ReadLine();
         while (string.IsNullOrWhiteSpace(input) && isRequired)
         {
             Clear();
@@ -98,7 +98,7 @@ public class ConsoleUIService : IConsoleUIService
             WriteLine(errorMessage, omitFromBuffer: true);
             Console.ResetColor();
             Write(prompt, omitFromBuffer: true);
-            input = Console.ReadLine();
+            input = ReadLine();
         }
 
         return input ?? "";
