@@ -24,9 +24,14 @@ public class ModulesList(
             ui.WriteLine("\tAdded modules will show up here");
         }
 
+        ui.WriteLine($"{"#",-4} {"Name",-20} {"HP",-5} {"U",-4} Description");
+        ui.WriteLine(new string('-', 60));
+
         foreach (var item in moduleList.Select((m, i) => new { module = m, index = i }))
         {
-            ui.WriteLine($"{item.index + 1}\t{item.module.Name}");
+            var hp = item.module.HorizontalPitch > 0 ? $"{item.module.HorizontalPitch}HP" : "";
+            var u = item.module.VerticalUnits > 0 ? $"{item.module.VerticalUnits}U" : "";
+            ui.WriteLine($"{item.index + 1,-4} {item.module.Name,-20} {hp,-5} {u,-4} {item.module.Description}");
         }
 
         ui.TextBottom();
