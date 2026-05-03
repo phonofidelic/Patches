@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="Patches.Application/Patches.Application.csproj" />
   <Project Path="Patches.CLI/Patches.CLI.csproj" />
+  <Project Path="Patches.Docs/Patches.Docs.csproj" />
   <Project Path="Patches.Domain/Patches.Domain.csproj" />
   <Project Path="Patches.Infrastructure/Patches.Infrastructure.csproj" />
   <Project Path="Patches.Services/Patches.Services.csproj" />

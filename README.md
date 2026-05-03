@@ -4,6 +4,8 @@
 
 A .NET 10 terminal UI application for managing Eurorack modular synthesizer patch connections. Built with [Spectre.Console](https://spectreconsole.net/) for the interactive console UI and SQLite (via EF Core) for local state persistence.
 
+<img alt="A patch matrix in the Patches console interface showing a grid of module connections" src="Patches.Docs/Assets/Patches-Console-UI.png" />
+
 ## Architecture
 
 The solution follows Clean Architecture across these projects:
