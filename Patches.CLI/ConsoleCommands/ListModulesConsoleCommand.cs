@@ -5,12 +5,14 @@ using Spectre.Console.Cli;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class ListModulesConsoleCommand(IHandler<ListModulesQuery, ListModulesQueryResult> handler)
+public class ListModulesConsoleCommand(
+    IHandler<ListModulesQuery, ListModulesQueryResult> handler,
+    CancellationToken ct = default)
     : AsyncCommand
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
-        var result = await handler.HandleAsync(new ListModulesQuery());
+        var result = await handler.HandleAsync(new ListModulesQuery(), ct);
 
         var table = new Table()
             .AddColumn("Name")

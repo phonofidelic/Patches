@@ -6,7 +6,9 @@ using System.ComponentModel;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class AddModuleConsoleCommand(IHandler<AddModuleCommand, AddModuleResult> handler)
+public class AddModuleConsoleCommand(
+    IHandler<AddModuleCommand, AddModuleResult> handler,
+    CancellationToken ct = default)
     : AsyncCommand<AddModuleConsoleCommand.Settings>
 {
     public class Settings : CommandSettings
@@ -39,7 +41,7 @@ public class AddModuleConsoleCommand(IHandler<AddModuleCommand, AddModuleResult>
             Description = settings.Description ?? string.Empty,
         };
 
-        var result = await handler.HandleAsync(cmd);
+        var result = await handler.HandleAsync(cmd, ct);
         AnsiConsole.MarkupLine($"[green]Added:[/] {Markup.Escape(result.Name)}  HP={result.HorizontalPitch}  U={result.VerticalUnits}");
         return 0;
     }

@@ -6,7 +6,9 @@ using System.ComponentModel;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class ImportModulesConsoleCommand(IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> handler)
+public class ImportModulesConsoleCommand(
+    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> handler,
+    CancellationToken ct = default)
     : AsyncCommand<ImportModulesConsoleCommand.Settings>
 {
     public class Settings : CommandSettings
@@ -18,9 +20,9 @@ public class ImportModulesConsoleCommand(IHandler<ImportModulesFromJsonCommand, 
 
     protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
-        var json = await File.ReadAllTextAsync(settings.FilePath);
+        var json = await File.ReadAllTextAsync(settings.FilePath, ct);
         var cmd = new ImportModulesFromJsonCommand { Json = json };
-        var result = await handler.HandleAsync(cmd);
+        var result = await handler.HandleAsync(cmd, ct);
         AnsiConsole.MarkupLine($"[green]Imported {result.ImportedCount} module(s).[/]");
         return 0;
     }
