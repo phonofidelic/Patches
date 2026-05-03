@@ -29,4 +29,16 @@ public class DbPathHelperTests
         Assert.Contains("Patches", result);
         Assert.EndsWith("patches.db", result);
     }
+
+    [Fact]
+    public void StripDbPathArgs_RemovesDbPathAndValue()
+        => Assert.Equal(["list"], DbPathHelper.StripDbPathArgs(["--db-path", "/tmp/db", "list"]));
+
+    [Fact]
+    public void StripDbPathArgs_NoDbPath_ReturnsUnchanged()
+        => Assert.Equal(["list"], DbPathHelper.StripDbPathArgs(["list"]));
+
+    [Fact]
+    public void StripDbPathArgs_OnlyDbPath_ReturnsEmpty()
+        => Assert.Equal([], DbPathHelper.StripDbPathArgs(["--db-path", "/tmp/db"]));
 }
