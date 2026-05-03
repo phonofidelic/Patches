@@ -19,7 +19,11 @@ public class ListModulesCommand(IHandler<ListModulesQuery, ListModulesQueryResul
             .AddColumn("Description");
 
         foreach (var m in result.Modules)
-            table.AddRow(m.Name, m.HorizontalPitch.ToString(), m.VerticalUnits.ToString(), m.Description ?? "");
+            table.AddRow(
+                Markup.Escape(m.Name),
+                Markup.Escape(m.HorizontalPitch.ToString()),
+                Markup.Escape(m.VerticalUnits.ToString()),
+                Markup.Escape(m.Description ?? ""));
 
         AnsiConsole.Write(table);
         return 0;

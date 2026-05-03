@@ -11,20 +11,20 @@ public class AddModuleCommand(IHandler<Patches.Shared.Commands.AddModuleCommand,
 {
     public class Settings : CommandSettings
     {
-        [CommandOption("--name")]
+        [CommandOption("--name|-n")]
         [Description("Module name")]
         public required string Name { get; init; }
 
         [CommandOption("--hp")]
-        [Description("Horizontal pitch (1–104)")]
+        [Description("Horizontal pitch (1-104)")]
         public required int HorizontalPitch { get; init; }
 
-        [CommandOption("--u")]
+        [CommandOption("--vertical-units|-u")]
         [DefaultValue(3)]
         [Description("Vertical units (default 3)")]
         public int VerticalUnits { get; init; } = 3;
 
-        [CommandOption("--description")]
+        [CommandOption("--description|-d")]
         [Description("Optional description")]
         public string? Description { get; init; }
     }
@@ -40,7 +40,7 @@ public class AddModuleCommand(IHandler<Patches.Shared.Commands.AddModuleCommand,
         };
 
         var result = await handler.HandleAsync(cmd);
-        AnsiConsole.MarkupLine($"[green]Added:[/] {result.Name}  HP={result.HorizontalPitch}  U={result.VerticalUnits}");
+        AnsiConsole.MarkupLine($"[green]Added:[/] {Markup.Escape(result.Name)}  HP={result.HorizontalPitch}  U={result.VerticalUnits}");
         return 0;
     }
 }
