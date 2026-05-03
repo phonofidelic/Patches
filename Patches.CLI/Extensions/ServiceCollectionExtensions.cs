@@ -36,15 +36,15 @@ public static class ServiceCollectionExtensions
 
     public static void AddConsoleApp(this IServiceCollection services)
     {
-        services.AddScoped<IConsoleUIService, ConsoleUIService>();
-        services.AddScoped<IModulargridApiClient, ModulargridApiClient>();
-        services.AddScoped((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
-        services.AddScoped<HelpScreen>();
-        services.AddScoped<ModulesList>();
-        services.AddScoped<AddModuleForm>();
-        services.AddScoped<ImportModulesFromJsonForm>();
-        services.AddScoped<PatchMatrixScreen>();
-        services.AddScoped<LoadPatchScreen>();
-        services.AddScoped<PatchesCLI>();      
+        services.AddSingleton<IConsoleUIService, ConsoleUIService>();
+        services.AddSingleton<IModulargridApiClient, ModulargridApiClient>();
+        services.AddSingleton((sp) => AnsiConsole.Create(new AnsiConsoleSettings()));
+        services.AddSingleton<HelpScreen>();
+        services.AddSingleton<ModulesList>();
+        services.AddSingleton<AddModuleForm>();
+        services.AddSingleton<ImportModulesFromJsonForm>();
+        services.AddSingleton<PatchMatrixScreen>();
+        services.AddSingleton<LoadPatchScreen>();
+        services.AddSingleton<PatchesCLI>();
     }
 }
