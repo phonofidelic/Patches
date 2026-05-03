@@ -18,4 +18,7 @@ public class ModuleListItem(
 {
     public Guid Id { get; set; } = id;
     public string Name { get; set; } = name;
+    public int HorizontalPitch { get; set; }
+    public int VerticalUnits { get; set; }
+    public string? Description { get; set; }
 }

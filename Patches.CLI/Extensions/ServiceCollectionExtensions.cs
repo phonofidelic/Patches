@@ -50,4 +50,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PatchesCLI>();
         return services;
     }
+
+    public static IServiceCollection AddCommands(this IServiceCollection services)
+    {
+        services.AddTransient<ConsoleCommands.AddModuleCommand>();
+        services.AddTransient<ConsoleCommands.ListModulesCommand>();
+        services.AddTransient<ConsoleCommands.ImportModulesCommand>();
+        return services;
+    }
 }
