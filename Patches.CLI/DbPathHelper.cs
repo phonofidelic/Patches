@@ -13,4 +13,17 @@ public static class DbPathHelper
             "Patches");
         return Path.Combine(dbDir, "patches.db");
     }
+
+    public static string[] StripDbPathArgs(string[] args)
+    {
+        var list = new List<string>(args);
+        var idx = list.IndexOf("--db-path");
+        if (idx >= 0)
+        {
+            list.RemoveAt(idx);          // remove --db-path
+            if (idx < list.Count)
+                list.RemoveAt(idx);      // remove the value
+        }
+        return [.. list];
+    }
 }

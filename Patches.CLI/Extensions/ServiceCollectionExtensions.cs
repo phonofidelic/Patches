@@ -53,9 +53,9 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCommands(this IServiceCollection services)
     {
-        services.AddTransient<ConsoleCommands.AddModuleCommand>();
-        services.AddTransient<ConsoleCommands.ListModulesCommand>();
-        services.AddTransient<ConsoleCommands.ImportModulesCommand>();
+        services.AddTransient<ConsoleCommands.AddModuleConsoleCommand>();
+        services.AddTransient<ConsoleCommands.ListModulesConsoleCommand>();
+        services.AddTransient<ConsoleCommands.ImportModulesConsoleCommand>();
         return services;
     }
 }

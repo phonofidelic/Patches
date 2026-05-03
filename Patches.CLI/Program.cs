@@ -5,6 +5,9 @@ using Patches.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Patches.Domain.Entities;
 using Patches.CLI.Extensions;
+using Patches.CLI.ConsoleCommands;
+using Patches.CLI.ConsoleCommands.Infrastructure;
+using Spectre.Console.Cli;
 
 var services = new ServiceCollection();
 
@@ -19,6 +22,7 @@ services.AddLogging();
 services.AddRepositories();
 services.AddHandlers();
 services.AddConsoleApp();
+services.AddCommands();
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
 var serviceProvider = services.BuildServiceProvider();
@@ -41,6 +45,25 @@ using (var scope = serviceProvider.CreateScope())
     }
 }
 
-var patches = serviceProvider.GetRequiredService<PatchesCLI>();
+var remainingArgs = DbPathHelper.StripDbPathArgs(args);
 
-await patches.InitAsync(dbPath);
+if (remainingArgs.Length == 0)
+{
+    var patches = serviceProvider.GetRequiredService<PatchesCLI>();
+    await patches.InitAsync(dbPath);
+}
+else
+{
+    var registrar = new MsDiTypeRegistrar(services);
+    var app = new CommandApp(registrar);
+    app.Configure(config =>
+    {
+        config.AddCommand<AddModuleConsoleCommand>("add")
+              .WithDescription("Add a new module");
+        config.AddCommand<ListModulesConsoleCommand>("list")
+              .WithDescription("List all modules");
+        config.AddCommand<ImportModulesConsoleCommand>("import-json")
+              .WithDescription("Import modules from a JSON file");
+    });
+    Environment.Exit(await app.RunAsync(remainingArgs));
+}
