@@ -6,8 +6,8 @@ using System.ComponentModel;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class AddModuleCommand(IHandler<Patches.Shared.Commands.AddModuleCommand, AddModuleResult> handler)
-    : AsyncCommand<AddModuleCommand.Settings>
+public class AddModuleConsoleCommand(IHandler<AddModuleCommand, AddModuleResult> handler)
+    : AsyncCommand<AddModuleConsoleCommand.Settings>
 {
     public class Settings : CommandSettings
     {
@@ -31,7 +31,7 @@ public class AddModuleCommand(IHandler<Patches.Shared.Commands.AddModuleCommand,
 
     protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
-        var cmd = new Patches.Shared.Commands.AddModuleCommand
+        var cmd = new AddModuleCommand
         {
             Name = settings.Name,
             HorizontalPitch = settings.HorizontalPitch,

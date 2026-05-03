@@ -5,7 +5,7 @@ using Spectre.Console.Cli;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class ListModulesCommand(IHandler<ListModulesQuery, ListModulesQueryResult> handler)
+public class ListModulesConsoleCommand(IHandler<ListModulesQuery, ListModulesQueryResult> handler)
     : AsyncCommand
 {
     protected override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)

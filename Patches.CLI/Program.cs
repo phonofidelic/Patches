@@ -58,11 +58,11 @@ else
     var app = new CommandApp(registrar);
     app.Configure(config =>
     {
-        config.AddCommand<AddModuleCommand>("add")
+        config.AddCommand<AddModuleConsoleCommand>("add")
               .WithDescription("Add a new module");
-        config.AddCommand<ListModulesCommand>("list")
+        config.AddCommand<ListModulesConsoleCommand>("list")
               .WithDescription("List all modules");
-        config.AddCommand<ImportModulesCommand>("import-json")
+        config.AddCommand<ImportModulesConsoleCommand>("import-json")
               .WithDescription("Import modules from a JSON file");
     });
     Environment.Exit(await app.RunAsync(remainingArgs));

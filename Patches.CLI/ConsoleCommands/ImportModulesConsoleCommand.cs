@@ -6,8 +6,8 @@ using System.ComponentModel;
 
 namespace Patches.CLI.ConsoleCommands;
 
-public class ImportModulesCommand(IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> handler)
-    : AsyncCommand<ImportModulesCommand.Settings>
+public class ImportModulesConsoleCommand(IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> handler)
+    : AsyncCommand<ImportModulesConsoleCommand.Settings>
 {
     public class Settings : CommandSettings
     {
