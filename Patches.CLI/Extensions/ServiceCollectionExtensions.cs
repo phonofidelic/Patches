@@ -14,7 +14,7 @@ namespace Patches.CLI.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddRepositories(this ServiceCollection services)
+    public static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IRepository<Module, Guid>, ModuleRepository>();
         services.AddScoped<IRepository<Vendor, Guid>, VendorRepository>();
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<Patch, int>, PatchRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
-    public static void AddHandlers(this ServiceCollection services)
+    public static void AddHandlers(this IServiceCollection services)
     {
         services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
         services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
     }
 
-    public static void AddConsoleApp(this ServiceCollection services)
+    public static void AddConsoleApp(this IServiceCollection services)
     {
         services.AddScoped<IConsoleUIService, ConsoleUIService>();
         services.AddScoped<IModulargridApiClient, ModulargridApiClient>();
