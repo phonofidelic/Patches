@@ -14,7 +14,7 @@ namespace Patches.CLI.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddRepositories(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IRepository<Module, Guid>, ModuleRepository>();
         services.AddScoped<IRepository<Vendor, Guid>, VendorRepository>();
@@ -22,8 +22,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IConnectionRepository, ConnectionRepository>();
         services.AddScoped<IRepository<Patch, int>, PatchRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        return services;
     }
-    public static void AddHandlers(this IServiceCollection services)
+    public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
         services.AddScoped<IHandler<AddModuleCommand, AddModuleResult>, AddModuleHandler>();
         services.AddScoped<IHandler<ListModulesQuery, ListModulesQueryResult>, ListModulesHandler>();
@@ -32,9 +33,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IHandler<AddConnectionCommand, AddConnectionResult>, AddConnectionHandler>();
         services.AddScoped<IHandler<DeleteConnectionCommand, DeleteConnectionResult>, DeleteConnectionHandler>();
         services.AddScoped<IHandler<ListPatchesQuery, ListPatchesQueryResult>, ListPatchesQueryHandler>();
+        return services;
     }
 
-    public static void AddConsoleApp(this IServiceCollection services)
+    public static IServiceCollection AddConsoleApp(this IServiceCollection services)
     {
         services.AddSingleton<IConsoleUIService, ConsoleUIService>();
         services.AddSingleton<IModulargridApiClient, ModulargridApiClient>();
@@ -46,5 +48,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PatchMatrixScreen>();
         services.AddSingleton<LoadPatchScreen>();
         services.AddSingleton<PatchesCLI>();
+        return services;
     }
 }
