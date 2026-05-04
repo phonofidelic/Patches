@@ -22,7 +22,7 @@ public class PatchMatrixScreen(
 
     private record RenderScreenDto(
         RenderPatchMatrixTableDto RenderPatchMatrixTableDto,
-        RenderContextHelpDto RenderContextHelpDto,
+        CommandMode CurrentCommandMode,
         string? ErrorMessage
     );
 
@@ -78,7 +78,7 @@ public class PatchMatrixScreen(
 
             RenderScreen(new(
                 RenderPatchMatrixTableDto: renderPatchMatrixTablePropsDto,
-                RenderContextHelpDto: new(CommandMode.KeyCommand),
+                CommandMode.KeyCommand,
                 ErrorMessage
             ));
 
@@ -123,7 +123,7 @@ public class PatchMatrixScreen(
                 case ConsoleKey.Enter:
                     RenderScreen(new(
                         RenderPatchMatrixTableDto: renderPatchMatrixTablePropsDto,
-                        RenderContextHelpDto: new(CommandMode.TextCommand),
+                        CommandMode.TextCommand,
                         ErrorMessage
                     ));
 
@@ -187,7 +187,7 @@ public class PatchMatrixScreen(
         }
         ansiConsole.Write(RenderPatchMatrixTable(dto.RenderPatchMatrixTableDto));
         ansiConsole.WriteLine("");
-        ansiConsole.Write(RenderContextHelp(dto.RenderContextHelpDto));
+        ansiConsole.Write(RenderContextHelp(dto.CurrentCommandMode));
         ansiConsole.MarkupLine(dto.ErrorMessage ?? "");
     }
 
@@ -309,7 +309,7 @@ public class PatchMatrixScreen(
         public void MoveToCol(int col) => Col = col;
     }
 
-    private static Rows RenderContextHelp(RenderContextHelpDto dto)
+    private static Rows RenderContextHelp(CommandMode currentCommandMode)
     {
         Markup[] keyCommandHelpRows = [
             new Markup("Use the [#FFD787 bold]arrow keys[/] to move the cursor across the patch matrix."),
@@ -326,7 +326,7 @@ public class PatchMatrixScreen(
 
         return new Rows([
             new Text(""),
-            .. dto.CurrentCommandMode == CommandMode.KeyCommand ? keyCommandHelpRows : textCommandHelpRows,
+            .. currentCommandMode == CommandMode.KeyCommand ? keyCommandHelpRows : textCommandHelpRows,
             new Text(""),
         ]);
     }
