@@ -57,8 +57,6 @@ public class PatchMatrixScreen(
             });
 
             ConnectionDto[] connections = [.. result.Connections];
-            List<int> connectedInputIds = [.. connections.Select(i => i.InputId)];
-            List<int> connectedOutputIds = [.. connections.Select(i => i.OutputId)];
 
             IReadOnlyList<PatchMatrixConnectionPointDto> columnConnectionPoints = result.Inputs;
             IReadOnlyList<string> columnConnectionPointNames = [.. columnConnectionPoints.Select(i => i.Name)];
