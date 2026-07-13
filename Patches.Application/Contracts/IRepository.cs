@@ -8,9 +8,9 @@ public interface IRepository<TEntity, TId>
 
     void Remove(TEntity entity);
 
-    IEnumerable<TEntity> GetAll();
-    
+    IEnumerable<TEntity> GetAll(bool trackChanges = false);
+
     Task<TEntity?> FindByIdAsync(TId id, bool trackChanges = false, CancellationToken ct = default);
 
-    IQueryable<TEntity> FindByCondition(Expression<Func<TEntity,bool>> condition, bool trackChanges = false);
+    IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> condition, bool trackChanges = false);
 }

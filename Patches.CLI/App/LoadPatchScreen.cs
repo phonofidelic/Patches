@@ -22,9 +22,11 @@ public class LoadPatchScreen(
             .Title("[#FFD787 bold]Load a saved Patch:[/]")
             .HighlightStyle(new Style(Color.LightGoldenrod2_2, Console.BackgroundColor, Decoration.Bold))
             .UseConverter(p => $"[#FFF]{p.Name}[/]")
-            .AddChoices(result.Patches);
+            .AddChoices(result.Patches)
+            .AddCancelResult(() => null!);
 
         ui.Clear();
+
         var loadPatchResult = new LoadPatchResult(ansiConsole.Prompt(choices));
 
         if (loadPatchResult.SelectedPatch != null)

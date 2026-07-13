@@ -26,15 +26,16 @@ public class VendorRepository(ApplicationDbContext context) : IRepository<Vendor
     }
 
     public Task<Vendor?> FindByIdAsync(
-        Guid id, 
+        Guid id,
         bool trackChanges = false,
         CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Vendor> GetAll()
+    public IEnumerable<Vendor> GetAll(bool trackChanges = false)
     {
-        return context.Vendors.AsNoTracking();
+        var query = context.Vendors;
+        return trackChanges ? query : query.AsNoTracking();
     }
 }

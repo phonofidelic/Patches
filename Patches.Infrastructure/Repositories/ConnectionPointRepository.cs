@@ -21,11 +21,11 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
     }
 
     public IQueryable<ConnectionPoint> FindByCondition(
-        Expression<Func<ConnectionPoint, bool>> condition, 
+        Expression<Func<ConnectionPoint, bool>> condition,
         bool trackChanges = false)
     {
-        return (!trackChanges 
-            ? context.ConnectionPoints.AsNoTracking() 
+        return (!trackChanges
+            ? context.ConnectionPoints.AsNoTracking()
             : context.ConnectionPoints)
                 .Include(c => c.Module)
                 .Include(c => c.Type)
@@ -34,7 +34,7 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
 
     public async Task<ConnectionPoint?> FindByIdAsync(int id, bool trackChanges = false, CancellationToken ct = default)
     {
-        return await(!trackChanges 
+        return await (!trackChanges
             ? context.ConnectionPoints.AsNoTracking()
             : context.ConnectionPoints)
                 .Include(c => c.Module)
@@ -43,11 +43,12 @@ public class ConnectionPointRepository(ApplicationDbContext context) : IReposito
                 .FirstOrDefaultAsync(c => c.Id == id, ct);
     }
 
-    public IEnumerable<ConnectionPoint> GetAll()
+    public IEnumerable<ConnectionPoint> GetAll(bool trackChanges = false)
     {
-        return context.ConnectionPoints
+        var query = context.ConnectionPoints
             .Include(c => c.Module)
-            .Include(c => c.Type)
-            .AsNoTracking();
+            .Include(c => c.Type);
+
+        return trackChanges ? query : query.AsNoTracking();
     }
 }

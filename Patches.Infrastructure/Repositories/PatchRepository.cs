@@ -30,7 +30,7 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
         bool trackChanges = false,
         CancellationToken ct = default)
     {
-        return await (!trackChanges 
+        return await (!trackChanges
             ? context.Patches.AsNoTracking()
             : context.Patches)
                 .Include(p => p.Modules)
@@ -38,8 +38,9 @@ public class PatchRepository(ApplicationDbContext context) : IRepository<Patch, 
                 .FirstOrDefaultAsync(p => p.Id == id, ct);
     }
 
-    public IEnumerable<Patch> GetAll()
+    public IEnumerable<Patch> GetAll(bool trackChanges = false)
     {
-        return context.Patches.AsNoTracking();
+        var query = context.Patches;
+        return trackChanges ? query : query.AsNoTracking();
     }
 }

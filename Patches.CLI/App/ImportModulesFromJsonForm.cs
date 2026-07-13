@@ -6,8 +6,9 @@ using Spectre.Console;
 namespace Patches.CLI.App;
 
 public class ImportModulesFromJsonForm(
-    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler,
-    IConsoleUIService ui) : IScreen
+    IConsoleUIService ui,
+    IAnsiConsole ansiConsole,
+    IHandler<ImportModulesFromJsonCommand, ImportModulesFromJsonResult> importFromJsonHandler) : IScreen
 {
     public async Task<string?> RunAsync()
     {
@@ -49,7 +50,7 @@ public class ImportModulesFromJsonForm(
         catch (Exception ex)
         {
             ui.Clear();
-            ui.WriteLine($"[red]Import failed: {Markup.Escape(ex.Message)}[/]");
+            ansiConsole.MarkupLine($"[red]Import failed: {Markup.Escape(ex.Message)}[/]");
             ui.TextMiddle();
             ui.WriteLine("Press any key to continue");
             ui.TextBottom();

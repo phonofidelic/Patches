@@ -20,18 +20,18 @@ public class ModuleRepository(ApplicationDbContext context) : IRepository<Module
     }
 
     public IQueryable<Module> FindByCondition(
-        Expression<Func<Module, bool>> condition, 
+        Expression<Func<Module, bool>> condition,
         bool trackChanges = false)
     {
         throw new NotImplementedException();
     }
 
     public async Task<Module?> FindByIdAsync(
-        Guid id, 
-        bool trackChanges = false, 
+        Guid id,
+        bool trackChanges = false,
         CancellationToken ct = default)
     {
-        return await (!trackChanges 
+        return await (!trackChanges
             ? context.Modules.AsNoTracking()
             : context.Modules)
                 .Include(m => m.ConnectionPoints)
@@ -39,8 +39,9 @@ public class ModuleRepository(ApplicationDbContext context) : IRepository<Module
                 .FirstOrDefaultAsync(m => m.Id == id, ct);
     }
 
-    public IEnumerable<Module> GetAll()
+    public IEnumerable<Module> GetAll(bool trackChanges = false)
     {
-        return context.Modules.AsNoTracking();
+        var query = context.Modules.Include(m => m.Vendor);
+        return trackChanges ? query : query.AsNoTracking();
     }
 }

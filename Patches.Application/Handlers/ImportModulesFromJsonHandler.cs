@@ -18,7 +18,7 @@ public class ImportModulesFromJsonHandler(
             .Select(m => (m.Name.ToLowerInvariant(), m.Vendor?.Name?.ToLowerInvariant()))
             .ToHashSet();
 
-        var vendorsByName = unitOfWork.Vendors.GetAll()
+        var vendorsByName = unitOfWork.Vendors.GetAll(trackChanges: true)
             .ToDictionary(v => v.Name, v => v, StringComparer.OrdinalIgnoreCase);
 
         int imported = 0, skipped = 0;
