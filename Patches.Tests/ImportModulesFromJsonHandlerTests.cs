@@ -25,8 +25,8 @@ public class ImportModulesFromJsonHandlerTests
     {
         var existingVendor = new Vendor { Name = "Mutable Instruments" };
         var existingModule = new Module { Name = "Plaits", Vendor = existingVendor };
-        _modules.GetAll().Returns([existingModule]);
-        _vendors.GetAll().Returns([existingVendor]);
+        _modules.GetAll(Arg.Any<bool>()).Returns([existingModule]);
+        _vendors.GetAll(Arg.Any<bool>()).Returns([existingVendor]);
         _apiClient.ParseModulesFromJson(Arg.Any<string>())
             .Returns([new ModulargridModuleDto("plaits", "", 14, "Mutable Instruments")]);
 
@@ -42,8 +42,8 @@ public class ImportModulesFromJsonHandlerTests
     {
         var existingVendor = new Vendor { Name = "Moog" };
         var existingModule = new Module { Name = "Grandmother", Vendor = existingVendor };
-        _modules.GetAll().Returns([existingModule]);
-        _vendors.GetAll().Returns([existingVendor]);
+        _modules.GetAll(Arg.Any<bool>()).Returns([existingModule]);
+        _vendors.GetAll(Arg.Any<bool>()).Returns([existingVendor]);
         _apiClient.ParseModulesFromJson(Arg.Any<string>())
             .Returns([new ModulargridModuleDto("Grandmother", "", 14, "moog")]);
 
@@ -58,8 +58,8 @@ public class ImportModulesFromJsonHandlerTests
     public async Task ReusesVendor_WhenVendorNameDiffersOnlyByCase()
     {
         var existingVendor = new Vendor { Name = "Mutable Instruments" };
-        _modules.GetAll().Returns([]);
-        _vendors.GetAll().Returns([existingVendor]);
+        _modules.GetAll(Arg.Any<bool>()).Returns([]);
+        _vendors.GetAll(Arg.Any<bool>()).Returns([existingVendor]);
         _apiClient.ParseModulesFromJson(Arg.Any<string>())
             .Returns([new ModulargridModuleDto("Rings", "", 8, "mutable instruments")]);
 
